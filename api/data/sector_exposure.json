@@ -1,0 +1,27 @@
+{
+  "funds": [
+    {
+      "id": "dxs",
+      "as_of": "2026-06-30",
+      "sectors": [
+        { "sector": "Office", "pct": 64 },
+        { "sector": "Industrial", "pct": 24 },
+        { "sector": "Other / unallocated", "pct": 12 }
+      ],
+      "basis": "calculated",
+      "note": "Calculated from FY26 portfolio dollar values ($9.8bn office, $3.6bn industrial, of a $15.3bn total portfolio) reported in Dexus's FY26 results release. Dexus does not publish an official sector weighting percentage table in its headline results; the remaining ~12% is unallocated in the source figures."
+    },
+    {
+      "id": "gpt",
+      "as_of": "2026-06-30",
+      "sectors": [
+        { "sector": "Retail", "pct": 40 },
+        { "sector": "Office", "pct": 36 },
+        { "sector": "Logistics", "pct": 23 }
+      ],
+      "basis": "calculated",
+      "note": "Calculated from 1H26 investment property net income by segment ($138.7m retail, $124.0m office, $80.3m logistics) reported in GPT's 1H26 results presentation. This is an income-share split, not an asset-value weighting, and is not an officially published percentage table."
+    }
+  ],
+  "coverage_note": "Sector exposure percentages are only available for Dexus and GPT, calculated from figures in their results releases as described above. The other 6 tracked funds don't publish a clean sector-split table in their headline ASX announcements; getting their sector weightings would need a line-by-line read of each fund's full results presentation or annual report, which hasn't been done yet."
+}

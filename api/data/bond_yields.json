@@ -1,0 +1,14 @@
+{
+  "series": [
+    { "period": "Q2 2024", "as_of": "2024-06-30", "yield_pct": 4.28 },
+    { "period": "Q3 2024", "as_of": "2024-09-30", "yield_pct": 4.07 },
+    { "period": "Q4 2024", "as_of": "2024-12-31", "yield_pct": 4.37 },
+    { "period": "Q1 2025", "as_of": "2025-03-31", "yield_pct": 4.44 },
+    { "period": "Q2 2025", "as_of": "2025-06-30", "yield_pct": 4.28 },
+    { "period": "Q3 2025", "as_of": "2025-09-30", "yield_pct": 4.29 },
+    { "period": "Q4 2025", "as_of": "2025-12-31", "yield_pct": 4.46 },
+    { "period": "Q3 2026 (approx.)", "as_of": "2026-08-19", "yield_pct": 5.05 }
+  ],
+  "source": "FRED series IRLTLT01AUQ156N (RBA-sourced, 10-year Australian Government bond yield), quarterly through Q4 2025. The 2026 point is a single secondary-source reading (Trading Economics, 19 Aug 2026) pending a full quarterly series for 2026 and should be treated as approximate.",
+  "note": "This series is used as a reference rate for the cap rate risk premium (WACR minus the 10-year bond yield), a standard metric property investors use to judge whether cap rates are pricing property cheap or expensive relative to risk-free government debt."
+}

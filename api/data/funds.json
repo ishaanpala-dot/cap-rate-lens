@@ -1,0 +1,172 @@
+{
+  "funds": [
+    {
+      "id": "dxs",
+      "name": "Dexus Group",
+      "ticker": "DXS",
+      "snapshots": [
+        {
+          "period": "FY26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 8.92,
+          "wacr_pct": 6.06,
+          "gearing_pct": 33.4,
+          "sectors": [
+            { "sector": "Office", "wale_years": 4.1, "cap_rate_pct": 6.19 },
+            { "sector": "Industrial", "wale_years": 4.4, "cap_rate_pct": 5.55 }
+          ],
+          "source": "ASX announcement 20 Aug 2026 (FY26 results) + Dec 2025 half-year sector valuation release"
+        },
+        {
+          "period": "1H26",
+          "as_of": "2025-12-31",
+          "nta_per_security": 8.95,
+          "wacr_pct": 6.19,
+          "gearing_pct": null,
+          "sectors": [
+            { "sector": "Office", "wale_years": 4.1, "cap_rate_pct": 6.19 },
+            { "sector": "Industrial", "wale_years": 4.4, "cap_rate_pct": 5.55 }
+          ],
+          "source": "Dexus 1H26 results"
+        }
+      ]
+    },
+    {
+      "id": "gpt",
+      "name": "GPT Group",
+      "ticker": "GPT",
+      "snapshots": [
+        {
+          "period": "1H26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 5.61,
+          "wacr_pct": 6.26,
+          "gearing_pct": 31.5,
+          "sectors": [],
+          "wale_years": 4.7,
+          "occupancy_pct": 97.6,
+          "source": "ASX announcement 17 Aug 2026 (Appendix 4D, 1H26 results)"
+        },
+        {
+          "period": "FY25",
+          "as_of": "2025-12-31",
+          "nta_per_security": 5.53,
+          "wacr_pct": null,
+          "gearing_pct": null,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": null,
+          "source": "GPT Group Appendix 4D prior-period comparative"
+        }
+      ]
+    },
+    {
+      "id": "clw",
+      "name": "Charter Hall Long WALE REIT",
+      "ticker": "CLW",
+      "snapshots": [
+        {
+          "period": "1H FY26",
+          "as_of": "2025-12-31",
+          "nta_per_security": 4.68,
+          "wacr_pct": null,
+          "gearing_pct": null,
+          "sectors": [],
+          "wale_years": 9.2,
+          "occupancy_pct": 99.9,
+          "source": "Charter Hall Long WALE REIT 1H FY26 half-year results, 11 Feb 2026"
+        }
+      ]
+    },
+    {
+      "id": "mgr",
+      "name": "Mirvac Group",
+      "ticker": "MGR",
+      "snapshots": [
+        {
+          "period": "FY26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 2.33,
+          "wacr_pct": null,
+          "gearing_pct": 24.1,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": 98.0,
+          "source": "ASX announcement 19 Aug 2026 (FY26 results)"
+        }
+      ]
+    },
+    {
+      "id": "sgp",
+      "name": "Stockland",
+      "ticker": "SGP",
+      "snapshots": [
+        {
+          "period": "FY26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 4.39,
+          "wacr_pct": null,
+          "gearing_pct": 22.7,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": null,
+          "source": "ASX announcement 19 Aug 2026 (FY26 results)"
+        }
+      ]
+    },
+    {
+      "id": "gmg",
+      "name": "Goodman Group",
+      "ticker": "GMG",
+      "snapshots": [
+        {
+          "period": "FY26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 11.79,
+          "wacr_pct": null,
+          "gearing_pct": 6.5,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": 95.6,
+          "source": "ASX announcement 20 Aug 2026 (FY26 results); gearing is balance-sheet basis, look-through gearing was 19.5%"
+        }
+      ]
+    },
+    {
+      "id": "scg",
+      "name": "Scentre Group",
+      "ticker": "SCG",
+      "snapshots": [
+        {
+          "period": "1H26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 3.71,
+          "wacr_pct": null,
+          "gearing_pct": null,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": null,
+          "source": "ASX announcement 25 Aug 2026 (1H26 results)"
+        }
+      ]
+    },
+    {
+      "id": "vcx",
+      "name": "Vicinity Centres",
+      "ticker": "VCX",
+      "snapshots": [
+        {
+          "period": "FY26",
+          "as_of": "2026-06-30",
+          "nta_per_security": 2.59,
+          "wacr_pct": null,
+          "gearing_pct": 26.1,
+          "sectors": [],
+          "wale_years": null,
+          "occupancy_pct": 99.6,
+          "source": "ASX announcement 20 Aug 2026 (FY26 results)"
+        }
+      ]
+    }
+  ]
+}
