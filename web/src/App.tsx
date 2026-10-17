@@ -19,6 +19,7 @@ import {
   type MonteCarloResult,
 } from "./api";
 import { SpreadLineChart, SectorDonut, RiskBarChart, SECTOR_PALETTE } from "./Charts";
+import About from "./About";
 
 function formatPct(n: number | null | undefined, digits = 2) {
   if (n === null || n === undefined) return "n/a";
@@ -29,7 +30,7 @@ function formatDollar(n: number) {
   return `$${n.toFixed(2)}`;
 }
 
-type View = "detail" | "compare" | "sectors";
+type View = "detail" | "compare" | "sectors" | "about";
 type SortKey = keyof Pick<CompareRow, "wacr_pct" | "gearing_pct" | "nta_per_security" | "wale_years">;
 
 export default function App() {
@@ -167,6 +168,9 @@ export default function App() {
           </TabButton>
           <TabButton active={view === "sectors"} onClick={() => setView("sectors")}>
             Sector exposure
+          </TabButton>
+          <TabButton active={view === "about"} onClick={() => setView("about")}>
+            About
           </TabButton>
         </div>
 
@@ -455,6 +459,8 @@ export default function App() {
             </p>
           </div>
         )}
+
+        {view === "about" && <About />}
       </div>
     </div>
   );
