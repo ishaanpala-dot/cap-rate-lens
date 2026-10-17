@@ -1,23 +1,44 @@
 @import "tailwindcss";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/jetbrains-mono";
 
 :root {
   color-scheme: light dark;
+  --accent: #2451d6;
+  --accent-soft: #e8edfc;
+  --accent-soft-dark: #16233f;
+  --font-sans: "Outfit Variable", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #5b8aff;
+    --accent-soft: #16233f;
+  }
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font-sans);
   background: #fafaf9;
   color: #18181b;
+  -webkit-font-smoothing: antialiased;
 }
 
 @media (prefers-color-scheme: dark) {
   body {
-    background: #0b0c0e;
+    background: #0a0b0d;
     color: #e4e4e7;
   }
 }
 
 .tabular {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+}
+
+.font-display {
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
 }

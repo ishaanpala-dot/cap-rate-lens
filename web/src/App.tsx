@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, Buildings, ChartLineUp } from "@phosphor-icons/react";
 import {
   getFund,
   getSensitivity,
@@ -18,8 +18,7 @@ import {
   type RiskRankingResponse,
   type MonteCarloResult,
 } from "./api";
-
-const SECTOR_COLORS = ["bg-blue-700", "bg-blue-400", "bg-zinc-400", "bg-zinc-300"];
+import { SpreadLineChart, SectorDonut, RiskBarChart, SECTOR_PALETTE } from "./Charts";
 
 function formatPct(n: number | null | undefined, digits = 2) {
   if (n === null || n === undefined) return "n/a";
@@ -128,12 +127,23 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#fafaf9] text-zinc-900 dark:bg-[#0b0c0e] dark:text-zinc-100">
-      <div className="mx-auto max-w-5xl px-5 py-12 md:py-16">
+    <div className="min-h-[100dvh] bg-[#fafaf9] text-zinc-900 dark:bg-[#0a0b0d] dark:text-zinc-100">
+      <nav className="sticky top-0 z-10 border-b border-zinc-200 bg-[#fafaf9]/90 backdrop-blur dark:border-zinc-800 dark:bg-[#0a0b0d]/90">
+        <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-5">
+          <span
+            className="flex h-6 w-6 items-center justify-center rounded text-white"
+            style={{ background: "var(--accent)" }}
+          >
+            <ChartLineUp weight="bold" size={14} />
+          </span>
+          <span className="font-display text-sm font-semibold">Cap Rate Lens</span>
+        </div>
+      </nav>
+
+      <div className="mx-auto max-w-5xl px-5 py-10 md:py-12">
         <header className="mb-10">
-          <p className="text-sm font-medium text-blue-700 dark:text-blue-400">Cap Rate Lens</p>
-          <h1 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">
-            How cap rate moves reshape ASX property trust valuations.
+          <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight max-w-[22ch]">
+            How cap rate moves reshape ASX property trust valuations
           </h1>
           <p className="mt-3 max-w-[60ch] text-zinc-600 dark:text-zinc-400">
             Compare WACR, gearing and NTA across major ASX-listed property trusts, or pick one
@@ -149,36 +159,15 @@ export default function App() {
         )}
 
         <div className="mb-8 flex gap-2 border-b border-zinc-200 dark:border-zinc-800">
-          <button
-            onClick={() => setView("detail")}
-            className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-              view === "detail"
-                ? "border-blue-700 text-zinc-900 dark:border-blue-500 dark:text-zinc-100"
-                : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
-            }`}
-          >
+          <TabButton active={view === "detail"} onClick={() => setView("detail")}>
             Fund detail
-          </button>
-          <button
-            onClick={() => setView("compare")}
-            className={`ml-4 border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-              view === "compare"
-                ? "border-blue-700 text-zinc-900 dark:border-blue-500 dark:text-zinc-100"
-                : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
-            }`}
-          >
+          </TabButton>
+          <TabButton active={view === "compare"} onClick={() => setView("compare")}>
             Market comparison
-          </button>
-          <button
-            onClick={() => setView("sectors")}
-            className={`ml-4 border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-              view === "sectors"
-                ? "border-blue-700 text-zinc-900 dark:border-blue-500 dark:text-zinc-100"
-                : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
-            }`}
-          >
+          </TabButton>
+          <TabButton active={view === "sectors"} onClick={() => setView("sectors")}>
             Sector exposure
-          </button>
+          </TabButton>
         </div>
 
         {view === "detail" && (
@@ -188,9 +177,10 @@ export default function App() {
                 <button
                   key={f.id}
                   onClick={() => setSelectedId(f.id)}
-                  className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                  style={selectedId === f.id ? { background: "var(--accent)", borderColor: "var(--accent)" } : undefined}
+                  className={`tabular rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     selectedId === f.id
-                      ? "border-blue-700 bg-blue-700 text-white dark:border-blue-500 dark:bg-blue-500"
+                      ? "text-white"
                       : "border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
                   }`}
                 >
@@ -202,9 +192,9 @@ export default function App() {
             {fund && snapshot && (
               <div className="grid gap-10 md:grid-cols-[1.1fr_1fr]">
                 <section>
-                  <h2 className="text-xl font-semibold">{fund.name}</h2>
+                  <h2 className="font-display text-xl font-semibold">{fund.name}</h2>
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    {snapshot.period} &middot; as of {snapshot.as_of}
+                    {snapshot.period}, as of {snapshot.as_of}
                   </p>
 
                   <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-zinc-200 bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800">
@@ -240,39 +230,33 @@ export default function App() {
 
                   <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">{snapshot.source}</p>
 
-                  {spread && spread.points.length > 0 && (
+                  {spread && spread.points.length >= 2 && (
                     <div className="mt-8">
                       <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                         Cap rate risk premium
                       </h3>
                       <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-                        WACR minus the 10-year Australian government bond yield at the time.
+                        Solid line is WACR, dashed line is the 10-year Australian government bond
+                        yield. The shaded gap is the risk premium.
                       </p>
-                      <div className="mt-3 space-y-2">
-                        {spread.points.map((p) => (
-                          <div
-                            key={p.as_of}
-                            className="flex items-center justify-between rounded-md border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-800"
-                          >
-                            <span className="text-zinc-600 dark:text-zinc-400">{p.period}</span>
-                            <span className="tabular flex gap-3">
-                              <span title="WACR">{formatPct(p.wacr_pct)}</span>
-                              <span className="text-zinc-400">&minus;</span>
-                              <span title="10y bond yield">{formatPct(p.bond_yield_pct)}</span>
-                              <span className="text-zinc-400">=</span>
-                              <span className="font-semibold">{formatPct(p.spread_pct)}</span>
-                            </span>
-                          </div>
-                        ))}
+                      <div className="mt-3">
+                        <SpreadLineChart points={spread.points} />
                       </div>
-                      {spread.points.length >= 2 && (
-                        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-                          {spread.points[spread.points.length - 1].spread_pct <
-                          spread.points[0].spread_pct
-                            ? "The premium has compressed over this period, bond yields moved up faster than this fund's cap rate."
-                            : "The premium has widened over this period, this fund's cap rate moved up faster than bond yields."}
-                        </p>
-                      )}
+                      <div className="mt-1 flex gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-0.5 w-3" style={{ background: "var(--accent)" }} />
+                          WACR
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-0.5 w-3 border-t-2 border-dashed border-zinc-400" />
+                          10y bond yield
+                        </span>
+                      </div>
+                      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                        {spread.points[spread.points.length - 1].spread_pct < spread.points[0].spread_pct
+                          ? "The premium has compressed over this period, bond yields moved up faster than this fund's cap rate."
+                          : "The premium has widened over this period, this fund's cap rate moved up faster than bond yields."}
+                      </p>
                       <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{spread.bond_source}</p>
                     </div>
                   )}
@@ -306,7 +290,8 @@ export default function App() {
                           step={0.05}
                           value={capRate}
                           onChange={(e) => setCapRate(Number(e.target.value))}
-                          className="mt-3 w-full accent-blue-700 dark:accent-blue-500"
+                          style={{ accentColor: "var(--accent)" }}
+                          className="mt-3 w-full"
                         />
                         <div className="mt-1 flex justify-between text-xs text-zinc-400">
                           <span>{sliderRange.min.toFixed(1)}%</span>
@@ -368,119 +353,99 @@ export default function App() {
         )}
 
         {view === "compare" && (
-          <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50 text-left dark:border-zinc-800 dark:bg-zinc-900">
-                  <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Fund</th>
-                  <SortableHeader label="NTA" sortKey="nta_per_security" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                  <SortableHeader label="WACR" sortKey="wacr_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                  <SortableHeader label="Gearing" sortKey="gearing_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                  <SortableHeader label="WALE" sortKey="wale_years" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                  <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">As of</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedRows.map((r) => (
-                  <tr
-                    key={r.id}
-                    onClick={() => {
-                      setSelectedId(r.id);
-                      setView("detail");
-                    }}
-                    className="cursor-pointer border-b border-zinc-100 last:border-0 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900"
-                  >
-                    <td className="px-4 py-3">
-                      <span className="font-medium">{r.ticker}</span>
-                      <span className="ml-2 text-zinc-500 dark:text-zinc-400">{r.name}</span>
-                    </td>
-                    <td className="tabular px-4 py-3">{formatDollar(r.nta_per_security)}</td>
-                    <td className="tabular px-4 py-3">{formatPct(r.wacr_pct)}</td>
-                    <td className="tabular px-4 py-3">{formatPct(r.gearing_pct, 1)}</td>
-                    <td className="tabular px-4 py-3">{r.wale_years ? `${r.wale_years.toFixed(1)}y` : "n/a"}</td>
-                    <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{r.as_of}</td>
+          <>
+            <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50 text-left dark:border-zinc-800 dark:bg-zinc-900">
+                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Fund</th>
+                    <SortableHeader label="NTA" sortKey="nta_per_security" active={sortKey} dir={sortDir} onSort={toggleSort} />
+                    <SortableHeader label="WACR" sortKey="wacr_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
+                    <SortableHeader label="Gearing" sortKey="gearing_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
+                    <SortableHeader label="WALE" sortKey="wale_years" active={sortKey} dir={sortDir} onSort={toggleSort} />
+                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">As of</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {view === "compare" && riskRanking && riskRanking.rows.length > 0 && (
-          <div className="mt-10">
-            <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              Leverage risk ranking
-            </h3>
-            <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-              NTA per security change for a +1% rise in cap rate, worst-affected first. Higher
-              gearing amplifies the same cap rate move into a larger equity swing.
-            </p>
-            <div className="mt-3 space-y-2">
-              {riskRanking.rows.map((r) => {
-                const maxMagnitude = Math.max(
-                  ...riskRanking.rows.map((x) => Math.abs(x.pct_change_per_1pct_cap_rate_rise)),
-                );
-                const widthPct =
-                  (Math.abs(r.pct_change_per_1pct_cap_rate_rise) / maxMagnitude) * 100;
-                return (
-                  <div key={r.id} className="flex items-center gap-3 text-sm">
-                    <span className="w-14 shrink-0 font-medium">{r.ticker}</span>
-                    <div className="h-5 flex-1 overflow-hidden rounded bg-zinc-100 dark:bg-zinc-900">
-                      <div
-                        style={{ width: `${widthPct}%` }}
-                        className="h-full bg-red-500/70 dark:bg-red-500/60"
-                      />
-                    </div>
-                    <span className="tabular w-16 shrink-0 text-right text-red-600 dark:text-red-400">
-                      {r.pct_change_per_1pct_cap_rate_rise.toFixed(1)}%
-                    </span>
-                    <span className="tabular w-14 shrink-0 text-right text-xs text-zinc-400">
-                      {formatPct(r.gearing_pct, 1)} gear.
-                    </span>
-                  </div>
-                );
-              })}
+                </thead>
+                <tbody>
+                  {sortedRows.map((r) => (
+                    <tr
+                      key={r.id}
+                      onClick={() => {
+                        setSelectedId(r.id);
+                        setView("detail");
+                      }}
+                      className="cursor-pointer border-b border-zinc-100 last:border-0 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900"
+                    >
+                      <td className="px-4 py-3">
+                        <span className="font-medium">{r.ticker}</span>
+                        <span className="ml-2 text-zinc-500 dark:text-zinc-400">{r.name}</span>
+                      </td>
+                      <td className="tabular px-4 py-3">{formatDollar(r.nta_per_security)}</td>
+                      <td className="tabular px-4 py-3">{formatPct(r.wacr_pct)}</td>
+                      <td className="tabular px-4 py-3">{formatPct(r.gearing_pct, 1)}</td>
+                      <td className="tabular px-4 py-3">{r.wale_years ? `${r.wale_years.toFixed(1)}y` : "n/a"}</td>
+                      <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{r.as_of}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
-              {riskRanking.coverage_note}
-            </p>
-          </div>
+
+            {riskRanking && riskRanking.rows.length > 0 && (
+              <div className="mt-10">
+                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  Leverage risk ranking
+                </h3>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                  NTA per security change for a +1% rise in cap rate, worst-affected first. Higher
+                  gearing amplifies the same cap rate move into a larger equity swing.
+                </p>
+                <div className="mt-3">
+                  <RiskBarChart rows={riskRanking.rows} />
+                </div>
+                <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+                  {riskRanking.coverage_note}
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         {view === "sectors" && sectorExposure && (
           <div>
-            <div className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2">
               {sectorExposure.funds.map((f) => {
                 const fundMeta = fundList.find((x) => x.id === f.id);
                 return (
-                  <div key={f.id}>
-                    <div className="flex items-baseline justify-between">
-                      <h3 className="text-sm font-medium">
-                        {fundMeta?.ticker} &middot; {fundMeta?.name}
-                      </h3>
-                      <span className="text-xs text-zinc-400 dark:text-zinc-500">as of {f.as_of}</span>
-                    </div>
-                    <div className="mt-2 flex h-8 overflow-hidden rounded-md">
-                      {f.sectors.map((s, i) => (
-                        <div
-                          key={s.sector}
-                          style={{ width: `${s.pct}%` }}
-                          className={`${SECTOR_COLORS[i % SECTOR_COLORS.length]} flex items-center justify-center text-xs font-medium text-white`}
-                          title={`${s.sector}: ${s.pct}%`}
-                        >
-                          {s.pct >= 12 ? `${s.pct}%` : ""}
+                  <div
+                    key={f.id}
+                    className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800"
+                  >
+                    <div className="flex items-start gap-4">
+                      <SectorDonut sectors={f.sectors} />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <Buildings weight="bold" size={14} className="text-zinc-400" />
+                          <h3 className="font-display text-sm font-semibold">
+                            {fundMeta?.ticker} &middot; {fundMeta?.name}
+                          </h3>
                         </div>
-                      ))}
+                        <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">as of {f.as_of}</p>
+                        <div className="mt-3 space-y-1">
+                          {f.sectors.map((s, i) => (
+                            <div key={s.sector} className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+                              <span
+                                className="h-2 w-2 shrink-0 rounded-full"
+                                style={{ background: SECTOR_PALETTE[i % SECTOR_PALETTE.length] }}
+                              />
+                              <span className="tabular">{s.pct}%</span>
+                              <span>{s.sector}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-                      {f.sectors.map((s, i) => (
-                        <span key={s.sector} className="inline-flex items-center gap-1.5">
-                          <span className={`h-2 w-2 rounded-full ${SECTOR_COLORS[i % SECTOR_COLORS.length]}`} />
-                          {s.sector} ({s.pct}%)
-                        </span>
-                      ))}
-                    </div>
-                    <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{f.note}</p>
+                    <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-500">{f.note}</p>
                   </div>
                 );
               })}
@@ -495,6 +460,30 @@ export default function App() {
   );
 }
 
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={active ? { borderColor: "var(--accent)" } : undefined}
+      className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+        active
+          ? "text-zinc-900 dark:text-zinc-100"
+          : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 function FanChart({ result }: { result: MonteCarloResult }) {
   const values = [result.p10, result.p25, result.p50, result.p75, result.p90];
   const min = Math.min(...values);
@@ -505,14 +494,14 @@ function FanChart({ result }: { result: MonteCarloResult }) {
   return (
     <div className="mt-4">
       <div className="relative h-10">
-        <div className="absolute inset-y-0 left-0 right-0 rounded bg-blue-100 dark:bg-blue-950" />
+        <div className="absolute inset-y-0 left-0 right-0 rounded" style={{ background: "var(--accent-soft)" }} />
         <div
-          className="absolute inset-y-0 rounded bg-blue-300 dark:bg-blue-800"
-          style={{ left: `${pct(result.p25)}%`, right: `${100 - pct(result.p75)}%` }}
+          className="absolute inset-y-0 rounded"
+          style={{ left: `${pct(result.p25)}%`, right: `${100 - pct(result.p75)}%`, background: "var(--accent)", opacity: 0.45 }}
         />
         <div
-          className="absolute inset-y-0 w-0.5 bg-blue-900 dark:bg-blue-200"
-          style={{ left: `${pct(result.p50)}%` }}
+          className="absolute inset-y-0 w-0.5"
+          style={{ left: `${pct(result.p50)}%`, background: "var(--accent)" }}
         />
       </div>
       <div className="tabular mt-2 flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
