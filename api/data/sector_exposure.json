@@ -21,7 +21,32 @@
       ],
       "basis": "calculated",
       "note": "Calculated from 1H26 investment property net income by segment ($138.7m retail, $124.0m office, $80.3m logistics) reported in GPT's 1H26 results presentation. This is an income-share split, not an asset-value weighting, and is not an officially published percentage table."
+    },
+    {
+      "id": "mgr",
+      "as_of": "2026-06-30",
+      "sectors": [
+        { "sector": "Office", "pct": 50 },
+        { "sector": "Retail", "pct": 22 },
+        { "sector": "Industrial", "pct": 20 },
+        { "sector": "Living", "pct": 8 }
+      ],
+      "basis": "calculated",
+      "note": "Calculated from invested capital by segment ($5.0bn office, $2.2bn retail, $2.0bn industrial, $0.8bn living, totalling $10.0bn) reported in Mirvac's FY26 results presentation. This is an asset-value weighting, the most direct of the calculated splits in this tool, but still not an officially published percentage table."
+    },
+    {
+      "id": "sgp",
+      "as_of": "2026-06-30",
+      "sectors": [
+        { "sector": "Retail", "pct": 34 },
+        { "sector": "Logistics", "pct": 27 },
+        { "sector": "Masterplanned", "pct": 19 },
+        { "sector": "Workplace", "pct": 11 },
+        { "sector": "Land Lease", "pct": 8 }
+      ],
+      "basis": "reported",
+      "note": "Directly published portfolio weighting table in Stockland's FY26 results presentation (p.~17). The only fund in this tool with an officially reported sector percentage split rather than a calculated one. Masterplanned and Land Lease are residential development segments with no comparable cap rate basis."
     }
   ],
-  "coverage_note": "Sector exposure percentages are only available for Dexus and GPT, calculated from figures in their results releases as described above. The other 6 tracked funds don't publish a clean sector-split table in their headline ASX announcements; getting their sector weightings would need a line-by-line read of each fund's full results presentation or annual report, which hasn't been done yet."
+  "coverage_note": "Sector exposure is available for Dexus, GPT and Mirvac (calculated from figures in their results releases) and Stockland (directly reported). The other 4 tracked funds don't publish a clean sector-split table in their headline ASX announcements; getting their sector weightings would need a line-by-line read of each fund's full results presentation or annual report."
 }

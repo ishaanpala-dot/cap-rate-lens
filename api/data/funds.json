@@ -69,12 +69,12 @@
           "period": "1H FY26",
           "as_of": "2025-12-31",
           "nta_per_security": 4.68,
-          "wacr_pct": null,
-          "gearing_pct": null,
+          "wacr_pct": 5.4,
+          "gearing_pct": 29.8,
           "sectors": [],
           "wale_years": 9.2,
           "occupancy_pct": 99.9,
-          "source": "Charter Hall Long WALE REIT 1H FY26 half-year results, 11 Feb 2026"
+          "source": "Charter Hall Long WALE REIT 1H FY26 ASX release, 12 Feb 2026 (p.2: portfolio WACR 5.4%, balance sheet gearing 29.8%, look-through gearing 41.0%)"
         }
       ]
     },
@@ -87,12 +87,12 @@
           "period": "FY26",
           "as_of": "2026-06-30",
           "nta_per_security": 2.33,
-          "wacr_pct": null,
+          "wacr_pct": 5.79,
           "gearing_pct": 24.1,
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 98.0,
-          "source": "ASX announcement 19 Aug 2026 (FY26 results)"
+          "source": "Mirvac FY26 results presentation, 19 Aug 2026 (office WACR 6.08% on $5.0bn, industrial 5.23% on $2.0bn, retail 5.65% on $2.2bn; portfolio figure here is calculated, invested-capital-weighted across those three sectors, excluding the $0.8bn living book which has no comparable cap rate basis). Gearing is balance-sheet basis; look-through gearing was 27.2%."
         }
       ]
     },
@@ -105,12 +105,16 @@
           "period": "FY26",
           "as_of": "2026-06-30",
           "nta_per_security": 4.39,
-          "wacr_pct": null,
+          "wacr_pct": 6.0,
           "gearing_pct": 22.7,
-          "sectors": [],
+          "sectors": [
+            { "sector": "Retail", "wale_years": 5.1, "cap_rate_pct": 6.2 },
+            { "sector": "Logistics", "wale_years": 3.7, "cap_rate_pct": 5.5 },
+            { "sector": "Workplace", "wale_years": 6.2, "cap_rate_pct": 6.9 }
+          ],
           "wale_years": null,
           "occupancy_pct": null,
-          "source": "ASX announcement 19 Aug 2026 (FY26 results)"
+          "source": "Stockland FY26 results presentation, 19 Aug 2026 (p.34: group weighted avg cap rate 6.0%, -12bps vs 30 Jun 2025; p.33: per-segment WACR and WALE)"
         }
       ]
     },
@@ -123,12 +127,12 @@
           "period": "FY26",
           "as_of": "2026-06-30",
           "nta_per_security": 11.79,
-          "wacr_pct": null,
+          "wacr_pct": 5.0,
           "gearing_pct": 6.5,
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 95.6,
-          "source": "ASX announcement 20 Aug 2026 (FY26 results); gearing is balance-sheet basis, look-through gearing was 19.5%"
+          "source": "Goodman Group FY26 results presentation, 20 Aug 2026 (global portfolio WACR tightened 12bps to 5.0%); gearing is balance-sheet basis, look-through gearing was 19.5%"
         }
       ]
     },
@@ -141,12 +145,12 @@
           "period": "1H26",
           "as_of": "2026-06-30",
           "nta_per_security": 3.71,
-          "wacr_pct": null,
+          "wacr_pct": 5.45,
           "gearing_pct": null,
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": null,
-          "source": "ASX announcement 25 Aug 2026 (1H26 results)"
+          "source": "Scentre Group 1H26 results speaker notes, 25 Aug 2026 (\"The weighted average capitalisation rate for the Portfolio remains broadly unchanged and was 5.45% as at June 2026\"). Gearing % appears in the results presentation but couldn't be confirmed from a cleanly-extractable figure; not sourced yet."
         }
       ]
     },
@@ -159,12 +163,12 @@
           "period": "FY26",
           "as_of": "2026-06-30",
           "nta_per_security": 2.59,
-          "wacr_pct": null,
+          "wacr_pct": 5.48,
           "gearing_pct": 26.1,
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 99.6,
-          "source": "ASX announcement 20 Aug 2026 (FY26 results)"
+          "source": "Vicinity Centres FY26 Annual Results presentation, 20 Aug 2026, p.30 key statistics table (total portfolio weighted average cap rate 5.48%; by asset category: Chadstone 4.25%, CBDs/sub-regional 5.23%, Premium Outlet Centres 5.85%, not stored per-sector here as the table's per-segment WALE wasn't confirmed). Gearing is consistent with proforma gearing of 26.5% shown separately in the same presentation."
         }
       ]
     }
