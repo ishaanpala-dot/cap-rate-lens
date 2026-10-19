@@ -42,6 +42,36 @@ def list_funds():
     return [{"id": f["id"], "name": f["name"], "ticker": f["ticker"]} for f in FUNDS]
 
 
+def _computed_wale(fund: dict, snapshot: dict) -> dict | None:
+    """Value-weight the snapshot's per-sector WALEs by that fund's sector_exposure
+    percentages, when both exist and the headline WALE wasn't reported. Only
+    covers the sectors we have a percentage for, so coverage is usually partial
+    and must be stated, not silently treated as the whole portfolio."""
+    if snapshot.get("wale_years") is not None or not snapshot.get("sectors"):
+        return None
+    exposure = next((e for e in SECTOR_EXPOSURE["funds"] if e["id"] == fund["id"]), None)
+    if not exposure:
+        return None
+    exposure_by_sector = {s["sector"]: s["pct"] for s in exposure["sectors"]}
+
+    covered_pct = 0.0
+    weighted_sum = 0.0
+    for s in snapshot["sectors"]:
+        pct = exposure_by_sector.get(s["sector"])
+        if pct is None:
+            continue
+        covered_pct += pct
+        weighted_sum += pct * s["wale_years"]
+
+    if covered_pct == 0:
+        return None
+
+    return {
+        "value": round(weighted_sum / covered_pct, 1),
+        "coverage_pct": round(covered_pct, 1),
+    }
+
+
 @app.get("/compare")
 def compare_funds():
     """Latest snapshot across every tracked fund, for the market-wide comparison view."""
@@ -60,6 +90,7 @@ def compare_funds():
                 "gearing_pct": snap["gearing_pct"],
                 "wale_years": snap.get("wale_years"),
                 "occupancy_pct": snap.get("occupancy_pct"),
+                "computed_wale": _computed_wale(f, snap),
             }
         )
     return rows
@@ -70,6 +101,11 @@ def get_fund(fund_id: str):
     fund = FUNDS_BY_ID.get(fund_id)
     if not fund:
         raise HTTPException(status_code=404, detail="Fund not found")
+
+    fund = dict(fund)
+    fund["snapshots"] = [dict(s) for s in fund["snapshots"]]
+    for snap in fund["snapshots"]:
+        snap["computed_wale"] = _computed_wale(fund, snap)
     return fund
 
 

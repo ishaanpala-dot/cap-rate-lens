@@ -30,8 +30,30 @@ function formatDollar(n: number) {
   return `$${n.toFixed(2)}`;
 }
 
+function formatBp(deltaPct: number) {
+  const bp = Math.round(deltaPct * 100);
+  return `${bp >= 0 ? "+" : ""}${bp}bp`;
+}
+
+const NOT_SOURCED_HINT =
+  "Not yet sourced: this may exist in the fund's full report, but hasn't been manually or automatically extracted yet.";
+
+function NotSourced() {
+  return (
+    <span
+      title={NOT_SOURCED_HINT}
+      className="cursor-help border-b border-dotted border-zinc-400 text-zinc-400 dark:border-zinc-600 dark:text-zinc-500"
+    >
+      n/a
+    </span>
+  );
+}
+
 type View = "detail" | "compare" | "sectors" | "about";
-type SortKey = keyof Pick<CompareRow, "wacr_pct" | "gearing_pct" | "nta_per_security" | "wale_years">;
+type SortKey = keyof Pick<
+  CompareRow,
+  "ticker" | "nta_per_security" | "wacr_pct" | "gearing_pct" | "wale_years" | "as_of"
+>;
 
 export default function App() {
   const [view, setView] = useState<View>("detail");
@@ -56,17 +78,15 @@ export default function App() {
         if (funds.length > 0) setSelectedId(funds[0].id);
       })
       .catch(() => setError("Could not reach the valuation API. Is it running on localhost:8000?"));
-  }, []);
-
-  useEffect(() => {
-    if (view !== "compare") return;
+    // Fetched eagerly (not gated to the compare tab) so staleness badges can be
+    // shown on the Fund detail tab too, without waiting for a tab switch.
     compareFunds()
       .then(setCompareRows)
       .catch(() => setError("Could not load the market comparison."));
     getRiskRanking()
       .then(setRiskRanking)
       .catch(() => setRiskRanking(null));
-  }, [view]);
+  }, []);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -112,11 +132,18 @@ export default function App() {
     const withValue = compareRows.filter((r) => r[sortKey] !== null);
     const withoutValue = compareRows.filter((r) => r[sortKey] === null);
     withValue.sort((a, b) => {
-      const diff = (a[sortKey] as number) - (b[sortKey] as number);
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      const diff = typeof av === "string" && typeof bv === "string" ? av.localeCompare(bv) : (av as number) - (bv as number);
       return sortDir === "asc" ? diff : -diff;
     });
     return [...withValue, ...withoutValue];
   }, [compareRows, sortKey, sortDir]);
+
+  const latestAsOf = useMemo(() => {
+    if (compareRows.length === 0) return null;
+    return compareRows.reduce((max, r) => (r.as_of > max ? r.as_of : max), compareRows[0].as_of);
+  }, [compareRows]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
@@ -199,15 +226,35 @@ export default function App() {
                   <h2 className="font-display text-xl font-semibold">{fund.name}</h2>
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">
                     {snapshot.period}, as of {snapshot.as_of}
+                    <StaleBadge asOf={snapshot.as_of} latestAsOf={latestAsOf} />
                   </p>
 
                   <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-zinc-200 bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800">
                     <Metric label="NTA per security" value={formatDollar(snapshot.nta_per_security)} />
-                    <Metric label="WACR" value={formatPct(snapshot.wacr_pct)} />
-                    <Metric label="Gearing" value={formatPct(snapshot.gearing_pct)} />
+                    <Metric
+                      label="WACR"
+                      value={snapshot.wacr_pct !== null ? formatPct(snapshot.wacr_pct) : <NotSourced />}
+                    />
+                    <Metric
+                      label="Gearing"
+                      value={snapshot.gearing_pct !== null ? formatPct(snapshot.gearing_pct) : <NotSourced />}
+                    />
                     <Metric
                       label="WALE"
-                      value={snapshot.wale_years ? `${snapshot.wale_years.toFixed(1)}y` : "n/a"}
+                      value={
+                        snapshot.wale_years ? (
+                          `${snapshot.wale_years.toFixed(1)}y`
+                        ) : snapshot.computed_wale ? (
+                          <span
+                            title={`Value-weighted across ${snapshot.computed_wale.coverage_pct}% of the portfolio (sectors with both a WALE and a known exposure %)`}
+                            className="cursor-help border-b border-dotted border-zinc-400"
+                          >
+                            ~{snapshot.computed_wale.value.toFixed(1)}y
+                          </span>
+                        ) : (
+                          <NotSourced />
+                        )
+                      }
                     />
                   </div>
 
@@ -260,6 +307,8 @@ export default function App() {
                         {spread.points[spread.points.length - 1].spread_pct < spread.points[0].spread_pct
                           ? "The premium has compressed over this period, bond yields moved up faster than this fund's cap rate."
                           : "The premium has widened over this period, this fund's cap rate moved up faster than bond yields."}
+                        {spread.points.length === 2 &&
+                          " Based on only two data points so far, treat this as indicative rather than a confirmed trend."}
                       </p>
                       <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{spread.bond_source}</p>
                     </div>
@@ -283,8 +332,11 @@ export default function App() {
                           <span className="tabular text-4xl font-semibold">
                             {capRate.toFixed(2)}%
                           </span>
-                          <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                          <span className="tabular text-sm text-zinc-500 dark:text-zinc-400">
                             base {formatPct(sliderRange.base)}
+                            {Math.abs(capRate - sliderRange.base) > 0.001 && (
+                              <span className="ml-1.5">({formatBp(capRate - sliderRange.base)})</span>
+                            )}
                           </span>
                         </div>
                         <input
@@ -342,8 +394,8 @@ export default function App() {
                           </h4>
                           <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                             {monteCarlo.simulations.toLocaleString()} draws of a cap rate shift
-                            (&plusmn;{monteCarlo.shift_std_dev_pct}pp, 1 std. dev., a simplifying
-                            assumption) applied to the valuation model.
+                            (&plusmn;{Math.round(monteCarlo.shift_std_dev_pct * 100)}bp, 1 std.
+                            dev., a simplifying assumption) applied to the valuation model.
                           </p>
                           <FanChart result={monteCarlo} />
                         </div>
@@ -362,12 +414,12 @@ export default function App() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 bg-zinc-50 text-left dark:border-zinc-800 dark:bg-zinc-900">
-                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Fund</th>
+                    <SortableHeader label="Fund" sortKey="ticker" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="NTA" sortKey="nta_per_security" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="WACR" sortKey="wacr_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="Gearing" sortKey="gearing_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="WALE" sortKey="wale_years" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">As of</th>
+                    <SortableHeader label="As of" sortKey="as_of" active={sortKey} dir={sortDir} onSort={toggleSort} />
                   </tr>
                 </thead>
                 <tbody>
@@ -385,10 +437,23 @@ export default function App() {
                         <span className="ml-2 text-zinc-500 dark:text-zinc-400">{r.name}</span>
                       </td>
                       <td className="tabular px-4 py-3">{formatDollar(r.nta_per_security)}</td>
-                      <td className="tabular px-4 py-3">{formatPct(r.wacr_pct)}</td>
-                      <td className="tabular px-4 py-3">{formatPct(r.gearing_pct, 1)}</td>
-                      <td className="tabular px-4 py-3">{r.wale_years ? `${r.wale_years.toFixed(1)}y` : "n/a"}</td>
-                      <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{r.as_of}</td>
+                      <td className="tabular px-4 py-3">{r.wacr_pct !== null ? formatPct(r.wacr_pct) : <NotSourced />}</td>
+                      <td className="tabular px-4 py-3">{r.gearing_pct !== null ? formatPct(r.gearing_pct, 1) : <NotSourced />}</td>
+                      <td className="tabular px-4 py-3">
+                        {r.wale_years ? (
+                          `${r.wale_years.toFixed(1)}y`
+                        ) : r.computed_wale ? (
+                          <span title={`Value-weighted across ${r.computed_wale.coverage_pct}% of the portfolio (sectors with both a WALE and a known exposure %)`} className="cursor-help border-b border-dotted border-zinc-400">
+                            ~{r.computed_wale.value.toFixed(1)}y
+                          </span>
+                        ) : (
+                          <NotSourced />
+                        )}
+                      </td>
+                      <td className="tabular px-4 py-3 text-zinc-500 dark:text-zinc-400">
+                        {r.as_of}
+                        <StaleBadge asOf={r.as_of} latestAsOf={latestAsOf} />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -401,8 +466,8 @@ export default function App() {
                   Leverage risk ranking
                 </h3>
                 <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
-                  NTA per security change for a +1% rise in cap rate, worst-affected first. Higher
-                  gearing amplifies the same cap rate move into a larger equity swing.
+                  NTA per security change for a +100bp rise in cap rate, worst-affected first.
+                  Higher gearing amplifies the same cap rate move into a larger equity swing.
                 </p>
                 <div className="mt-3">
                   <RiskBarChart rows={riskRanking.rows} />
@@ -482,11 +547,23 @@ function TabButton({
       className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
         active
           ? "text-zinc-900 dark:text-zinc-100"
-          : "border-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400"
+          : "border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
       }`}
     >
       {children}
     </button>
+  );
+}
+
+function StaleBadge({ asOf, latestAsOf }: { asOf: string; latestAsOf: string | null }) {
+  if (!latestAsOf || asOf >= latestAsOf) return null;
+  return (
+    <span
+      title={`Latest tracked data is as of ${latestAsOf}. This fund's figures are from ${asOf}.`}
+      className="tabular ml-2 cursor-help rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400"
+    >
+      older data
+    </span>
   );
 }
 
@@ -536,20 +613,22 @@ function SortableHeader({
 }) {
   const isActive = active === sortKey;
   return (
-    <th
-      onClick={() => onSort(sortKey)}
-      className="cursor-pointer px-4 py-3 font-medium text-zinc-500 select-none dark:text-zinc-400"
-    >
-      <span className="inline-flex items-center gap-1">
+    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+      <button
+        onClick={() => onSort(sortKey)}
+        aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}
+        className="inline-flex items-center gap-1 rounded select-none focus-visible:outline-2 focus-visible:outline-offset-2"
+        style={{ outlineColor: "var(--accent)" }}
+      >
         {label}
         {isActive &&
           (dir === "asc" ? <CaretUp weight="bold" size={12} /> : <CaretDown weight="bold" size={12} />)}
-      </span>
+      </button>
     </th>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="bg-white p-4 dark:bg-zinc-950">
       <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>

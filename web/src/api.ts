@@ -12,6 +12,11 @@ export type FundSector = {
   cap_rate_pct: number;
 };
 
+export type ComputedWale = {
+  value: number;
+  coverage_pct: number;
+};
+
 export type FundSnapshot = {
   period: string;
   as_of: string;
@@ -22,6 +27,7 @@ export type FundSnapshot = {
   wale_years?: number | null;
   occupancy_pct?: number | null;
   source: string;
+  computed_wale?: ComputedWale | null;
 };
 
 export type Fund = FundSummary & {
@@ -71,6 +77,7 @@ export type CompareRow = {
   gearing_pct: number | null;
   wale_years: number | null;
   occupancy_pct: number | null;
+  computed_wale: ComputedWale | null;
 };
 
 export async function compareFunds(): Promise<CompareRow[]> {
