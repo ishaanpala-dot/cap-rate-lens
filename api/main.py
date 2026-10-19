@@ -1,10 +1,10 @@
 import json
-from datetime import date
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+import rba_bond_yields
 from valuation import leverage_adjusted_sensitivity, monte_carlo_nta, nta_sensitivity
 
 app = FastAPI(title="cap-rate-lens API")
@@ -19,17 +19,7 @@ app.add_middleware(
 DATA_DIR = Path(__file__).parent / "data"
 FUNDS = json.loads((DATA_DIR / "funds.json").read_text())["funds"]
 FUNDS_BY_ID = {f["id"]: f for f in FUNDS}
-BOND_YIELDS = json.loads((DATA_DIR / "bond_yields.json").read_text())
 SECTOR_EXPOSURE = json.loads((DATA_DIR / "sector_exposure.json").read_text())
-
-
-def _nearest_bond_yield(as_of: str):
-    target = date.fromisoformat(as_of)
-    best = min(
-        BOND_YIELDS["series"],
-        key=lambda p: abs((date.fromisoformat(p["as_of"]) - target).days),
-    )
-    return best
 
 
 @app.get("/health")
@@ -133,34 +123,51 @@ def get_sensitivity(fund_id: str, new_cap_rate_pct: float, snapshot_index: int =
 
 @app.get("/bond-yields")
 def get_bond_yields():
-    return BOND_YIELDS
+    """Live status of the automated RBA 10-year bond yield feed (full daily
+    series available via its 'points' count; see /bond-yields/status for the
+    lightweight health check used elsewhere)."""
+    series = rba_bond_yields.get_series()
+    return {
+        "series": series,
+        "source": rba_bond_yields.get_status()["source"],
+        "source_url": rba_bond_yields.RBA_F2_URL,
+    }
+
+
+@app.get("/bond-yields/status")
+def get_bond_yields_status():
+    return rba_bond_yields.get_status()
 
 
 @app.get("/funds/{fund_id}/spread")
 def get_spread(fund_id: str):
     """Cap rate risk premium: WACR minus the 10-year govt bond yield, for every
-    snapshot of this fund that reports a WACR."""
+    snapshot of this fund that reports a WACR. Bond yield is the actual daily
+    RBA print on (or nearest trading day to) the snapshot's as_of date."""
     fund = FUNDS_BY_ID.get(fund_id)
     if not fund:
         raise HTTPException(status_code=404, detail="Fund not found")
 
+    status = rba_bond_yields.get_status()
     points = []
     for snap in fund["snapshots"]:
         if snap["wacr_pct"] is None:
             continue
-        bond = _nearest_bond_yield(snap["as_of"])
+        bond = rba_bond_yields.nearest(snap["as_of"])
+        if bond is None:
+            continue
         points.append(
             {
                 "period": snap["period"],
                 "as_of": snap["as_of"],
                 "wacr_pct": snap["wacr_pct"],
                 "bond_yield_pct": bond["yield_pct"],
-                "bond_yield_period": bond["period"],
+                "bond_yield_period": bond["as_of"],
                 "spread_pct": round(snap["wacr_pct"] - bond["yield_pct"], 2),
             }
         )
     points.sort(key=lambda p: p["as_of"])
-    return {"fund_id": fund_id, "points": points, "bond_source": BOND_YIELDS["source"]}
+    return {"fund_id": fund_id, "points": points, "bond_source": status["source"]}
 
 
 @app.get("/sector-exposure")

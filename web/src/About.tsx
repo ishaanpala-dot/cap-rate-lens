@@ -155,16 +155,26 @@ export default function About() {
         <p>
           Every figure is sourced from a fund's own public ASX announcements (quarterly
           updates, half-year and full-year results), cited inline wherever it's shown.
-          Nothing here is estimated or invented to fill a gap. Where a fund's results
-          don't report a figure the model needs (WACR for six of the eight funds, sector
-          splits for six of the eight), the tool shows "n/a" and explains why, rather
-          than guessing a plausible-looking number.
+          Nothing here is estimated or invented to fill a gap. Where a figure the model
+          needs (WACR for six of the eight funds, sector splits for six of the eight)
+          hasn't been sourced yet, the tool shows "n/a" with a note explaining that
+          honestly: not every gap has been confirmed as the fund simply not disclosing
+          it, some are genuinely just not extracted yet. The two are shown the same way
+          for now, because claiming to know the difference without having checked would
+          be its own kind of dishonesty.
         </p>
         <p>
           The sector exposure percentages for Dexus and GPT are calculated from dollar
           or income figures in their results releases, since neither fund publishes an
           official percentage table, that calculation and its source are stated directly
           under each chart.
+        </p>
+        <p>
+          The 10-year government bond yield, used in the risk premium chart, is the one
+          figure on this page that's fully automated: it's fetched live from the RBA's
+          own daily statistical table (series FCMYGBAG10D), cached for up to 12 hours,
+          with no manual step involved. Every other figure here is still sourced by
+          hand, that gap is exactly what the planned extraction pipeline is for.
         </p>
       </Section>
 
