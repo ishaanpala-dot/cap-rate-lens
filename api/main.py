@@ -81,6 +81,8 @@ def compare_funds():
                 "wale_years": snap.get("wale_years"),
                 "occupancy_pct": snap.get("occupancy_pct"),
                 "computed_wale": _computed_wale(f, snap),
+                "source": snap.get("source"),
+                "source_url": snap.get("source_url"),
             }
         )
     return rows

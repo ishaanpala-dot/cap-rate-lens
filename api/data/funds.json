@@ -74,7 +74,8 @@
           "sectors": [],
           "wale_years": 9.2,
           "occupancy_pct": 99.9,
-          "source": "Charter Hall Long WALE REIT 1H FY26 ASX release, 12 Feb 2026 (p.2: portfolio WACR 5.4%, balance sheet gearing 29.8%, look-through gearing 41.0%)"
+          "source": "Charter Hall Long WALE REIT 1H FY26 ASX release, 12 Feb 2026 (p.2: portfolio WACR 5.4%, balance sheet gearing 29.8%, look-through gearing 41.0%)",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260212/pdf/06w70tbpqppsr4.pdf"
         }
       ]
     },
@@ -92,7 +93,8 @@
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 98.0,
-          "source": "Mirvac FY26 results presentation, 19 Aug 2026 (office WACR 6.08% on $5.0bn, industrial 5.23% on $2.0bn, retail 5.65% on $2.2bn; portfolio figure here is calculated, invested-capital-weighted across those three sectors, excluding the $0.8bn living book which has no comparable cap rate basis). Gearing is balance-sheet basis; look-through gearing was 27.2%."
+          "source": "Mirvac FY26 results presentation, 19 Aug 2026 (office WACR 6.08% on $5.0bn, industrial 5.23% on $2.0bn, retail 5.65% on $2.2bn; portfolio figure here is calculated, invested-capital-weighted across those three sectors, excluding the $0.8bn living book which has no comparable cap rate basis). Gearing is balance-sheet basis; look-through gearing was 27.2%.",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260819/pdf/072x1x49frfgbt.pdf"
         }
       ]
     },
@@ -114,7 +116,8 @@
           ],
           "wale_years": null,
           "occupancy_pct": null,
-          "source": "Stockland FY26 results presentation, 19 Aug 2026 (p.34: group weighted avg cap rate 6.0%, -12bps vs 30 Jun 2025; p.33: per-segment WACR and WALE)"
+          "source": "Stockland FY26 results presentation, 19 Aug 2026 (p.34: group weighted avg cap rate 6.0%, -12bps vs 30 Jun 2025; p.33: per-segment WACR and WALE)",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260819/pdf/072xgvhzyx01h0.pdf"
         }
       ]
     },
@@ -132,7 +135,8 @@
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 95.6,
-          "source": "Goodman Group FY26 results presentation, 20 Aug 2026 (global portfolio WACR tightened 12bps to 5.0%); gearing is balance-sheet basis, look-through gearing was 19.5%"
+          "source": "Goodman Group FY26 results presentation, 20 Aug 2026 (global portfolio WACR tightened 12bps to 5.0%); gearing is balance-sheet basis, look-through gearing was 19.5%",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260820/pdf/072zb01p96zl4d.pdf"
         }
       ]
     },
@@ -150,7 +154,8 @@
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": null,
-          "source": "Scentre Group 1H26 results speaker notes, 25 Aug 2026 (\"The weighted average capitalisation rate for the Portfolio remains broadly unchanged and was 5.45% as at June 2026\"). Gearing % appears in the results presentation but couldn't be confirmed from a cleanly-extractable figure; not sourced yet."
+          "source": "Scentre Group 1H26 results speaker notes, 25 Aug 2026 (\"The weighted average capitalisation rate for the Portfolio remains broadly unchanged and was 5.45% as at June 2026\"). Gearing % appears in the results presentation but couldn't be confirmed from a cleanly-extractable figure; not sourced yet.",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260825/pdf/073646zjgjyqmb.pdf"
         }
       ]
     },
@@ -168,7 +173,8 @@
           "sectors": [],
           "wale_years": null,
           "occupancy_pct": 99.6,
-          "source": "Vicinity Centres FY26 Annual Results presentation, 20 Aug 2026, p.30 key statistics table (total portfolio weighted average cap rate 5.48%; by asset category: Chadstone 4.25%, CBDs/sub-regional 5.23%, Premium Outlet Centres 5.85%, not stored per-sector here as the table's per-segment WALE wasn't confirmed). Gearing is consistent with proforma gearing of 26.5% shown separately in the same presentation."
+          "source": "Vicinity Centres FY26 Annual Results presentation, 20 Aug 2026, p.30 key statistics table (total portfolio weighted average cap rate 5.48%; by asset category: Chadstone 4.25%, CBDs/sub-regional 5.23%, Premium Outlet Centres 5.85%, not stored per-sector here as the table's per-segment WALE wasn't confirmed). Gearing is consistent with proforma gearing of 26.5% shown separately in the same presentation.",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260820/pdf/072zgrxjd8h4qr.pdf"
         }
       ]
     }

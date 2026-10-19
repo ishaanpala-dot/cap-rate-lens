@@ -27,6 +27,7 @@ export type FundSnapshot = {
   wale_years?: number | null;
   occupancy_pct?: number | null;
   source: string;
+  source_url?: string | null;
   computed_wale?: ComputedWale | null;
 };
 
@@ -78,6 +79,8 @@ export type CompareRow = {
   wale_years: number | null;
   occupancy_pct: number | null;
   computed_wale: ComputedWale | null;
+  source: string | null;
+  source_url: string | null;
 };
 
 export async function compareFunds(): Promise<CompareRow[]> {
@@ -113,6 +116,7 @@ export type SectorExposureFund = {
   sectors: { sector: string; pct: number }[];
   basis: string;
   note: string;
+  source_url?: string | null;
 };
 
 export type SectorExposureResponse = {

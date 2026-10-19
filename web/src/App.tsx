@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CaretDown, CaretUp, Buildings, ChartLineUp } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, Buildings, ChartLineUp, ArrowSquareOut } from "@phosphor-icons/react";
 import {
   getFund,
   getSensitivity,
@@ -46,6 +46,26 @@ function NotSourced() {
     >
       n/a
     </span>
+  );
+}
+
+function SourceLine({ text, url }: { text: string | null | undefined; url?: string | null }) {
+  if (!text) return null;
+  if (!url) {
+    return <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">{text}</p>;
+  }
+  return (
+    <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-start gap-1 underline decoration-dotted underline-offset-2 hover:text-zinc-600 dark:hover:text-zinc-300"
+      >
+        <span>{text}</span>
+        <ArrowSquareOut weight="bold" size={11} className="mt-0.5 shrink-0" />
+      </a>
+    </p>
   );
 }
 
@@ -279,7 +299,7 @@ export default function App() {
                     </div>
                   )}
 
-                  <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">{snapshot.source}</p>
+                  <SourceLine text={snapshot.source} url={snapshot.source_url} />
 
                   {spread && spread.points.length >= 2 && (
                     <div className="mt-8">
@@ -420,6 +440,7 @@ export default function App() {
                     <SortableHeader label="Gearing" sortKey="gearing_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="WALE" sortKey="wale_years" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="As of" sortKey="as_of" active={sortKey} dir={sortDir} onSort={toggleSort} />
+                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Source</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -453,6 +474,24 @@ export default function App() {
                       <td className="tabular px-4 py-3 text-zinc-500 dark:text-zinc-400">
                         {r.as_of}
                         <StaleBadge asOf={r.as_of} latestAsOf={latestAsOf} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {r.source_url ? (
+                          <a
+                            href={r.source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            title={r.source ?? undefined}
+                            className="inline-flex text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                          >
+                            <ArrowSquareOut weight="bold" size={14} />
+                          </a>
+                        ) : (
+                          <span title={r.source ?? NOT_SOURCED_HINT} className="cursor-help text-zinc-300 dark:text-zinc-700">
+                            <ArrowSquareOut weight="bold" size={14} />
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -515,6 +554,16 @@ export default function App() {
                       </div>
                     </div>
                     <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-500">{f.note}</p>
+                    {f.source_url && (
+                      <a
+                        href={f.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-400 underline decoration-dotted underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                      >
+                        View source <ArrowSquareOut weight="bold" size={11} />
+                      </a>
+                    )}
                   </div>
                 );
               })}

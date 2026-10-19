@@ -32,7 +32,8 @@
         { "sector": "Living", "pct": 8 }
       ],
       "basis": "calculated",
-      "note": "Calculated from invested capital by segment ($5.0bn office, $2.2bn retail, $2.0bn industrial, $0.8bn living, totalling $10.0bn) reported in Mirvac's FY26 results presentation. This is an asset-value weighting, the most direct of the calculated splits in this tool, but still not an officially published percentage table."
+      "note": "Calculated from invested capital by segment ($5.0bn office, $2.2bn retail, $2.0bn industrial, $0.8bn living, totalling $10.0bn) reported in Mirvac's FY26 results presentation. This is an asset-value weighting, the most direct of the calculated splits in this tool, but still not an officially published percentage table.",
+      "source_url": "https://announcements.asx.com.au/asxpdf/20260819/pdf/072x1x49frfgbt.pdf"
     },
     {
       "id": "sgp",
@@ -45,7 +46,8 @@
         { "sector": "Land Lease", "pct": 8 }
       ],
       "basis": "reported",
-      "note": "Directly published portfolio weighting table in Stockland's FY26 results presentation (p.~17). The only fund in this tool with an officially reported sector percentage split rather than a calculated one. Masterplanned and Land Lease are residential development segments with no comparable cap rate basis."
+      "note": "Directly published portfolio weighting table in Stockland's FY26 results presentation (p.~17). The only fund in this tool with an officially reported sector percentage split rather than a calculated one. Masterplanned and Land Lease are residential development segments with no comparable cap rate basis.",
+      "source_url": "https://announcements.asx.com.au/asxpdf/20260819/pdf/072xgvhzyx01h0.pdf"
     }
   ],
   "coverage_note": "Sector exposure is available for Dexus, GPT and Mirvac (calculated from figures in their results releases) and Stockland (directly reported). The other 4 tracked funds don't publish a clean sector-split table in their headline ASX announcements; getting their sector weightings would need a line-by-line read of each fund's full results presentation or annual report."
