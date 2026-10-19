@@ -13,7 +13,6 @@ import {
   getCovenantRanking,
   getHeatmap,
   getCommentary,
-  postPortfolio,
   type Fund,
   type FundSummary,
   type SensitivityResult,
@@ -26,8 +25,6 @@ import {
   type CovenantRankingResponse,
   type HeatmapResponse,
   type CommentaryResponse,
-  type PortfolioResponse,
-  type PortfolioHolding,
 } from "./api";
 import {
   SpreadLineChart,
@@ -35,7 +32,6 @@ import {
   RiskBarChart,
   CovenantBarChart,
   Heatmap,
-  SensitivityCurveChart,
   SECTOR_PALETTE,
 } from "./Charts";
 import About from "./About";
