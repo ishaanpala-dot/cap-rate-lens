@@ -65,6 +65,108 @@ def leverage_adjusted_sensitivity(wacr_pct: float, gearing_pct: float) -> float:
     return round((new_nta - 1) * 100, 2)
 
 
+class CovenantResult(BaseModel):
+    gearing_pct: float
+    covenant_gearing_pct: float
+    cap_rate_at_breach_pct: float
+    bp_headroom: float
+
+
+def covenant_headroom(
+    wacr_pct: float,
+    gearing_pct: float,
+    covenant_gearing_pct: float = 50.0,
+) -> CovenantResult:
+    """Cap rate rise at which this fund's gearing would reach the given
+    threshold, holding debt fixed. None of the funds in this tool disclose an
+    actual bank-loan gearing covenant in their headline results, so this uses
+    a single assumed threshold applied uniformly to every fund (50% gearing,
+    a commonly-cited rule-of-thumb covenant level for Australian REIT debt
+    facilities), clearly labelled as an assumption rather than a reported
+    figure. Swap in a real disclosed covenant per fund if one is ever sourced.
+
+    Derivation: gearing = Debt / Assets, and Assets scales with cap rate as
+    Assets1 = Assets0 * (r0 / r1) (see nta_sensitivity). Debt is fixed, so
+    gearing1 = Debt / Assets1 = gearing0 * (Assets0 / Assets1) = gearing0 * (r1 / r0).
+    Solving gearing1 = covenant for r1 gives the breach cap rate directly,
+    without needing to know Assets or Debt in dollar terms.
+    """
+    g0 = gearing_pct / 100
+    g_target = covenant_gearing_pct / 100
+    r0 = wacr_pct
+
+    r1 = r0 * (g_target / g0)
+    bp_headroom = (r1 - r0) * 100
+
+    return CovenantResult(
+        gearing_pct=gearing_pct,
+        covenant_gearing_pct=covenant_gearing_pct,
+        cap_rate_at_breach_pct=round(r1, 2),
+        bp_headroom=round(bp_headroom, 0),
+    )
+
+
+class HeatmapCell(BaseModel):
+    cap_rate_shift_bp: int
+    noi_growth_pct: float
+    pct_change: float
+
+
+class HeatmapResult(BaseModel):
+    base_nta_per_security: float
+    base_cap_rate_pct: float
+    cap_rate_shifts_bp: list[int]
+    noi_growth_steps_pct: list[float]
+    cells: list[HeatmapCell]
+
+
+def two_factor_heatmap(
+    nta_per_security: float,
+    wacr_pct: float,
+    gearing_pct: float,
+) -> HeatmapResult:
+    """NTA % change across a grid of cap rate shift x NOI growth, so a reader
+    can see what rent growth would be needed to offset a given cap rate move.
+
+    Value = NOI / CapRate. If NOI grows by g and the cap rate moves from r0 to
+    r1, new asset value = Assets0 * r0 * (1 + g) / r1 (the (1+g) term is the
+    only addition to the plain cap-rate-sensitivity formula). Debt fixed, same
+    leverage flow-through as nta_sensitivity."""
+    cap_rate_shifts_bp = [-100, -50, -25, 0, 25, 50, 100, 150, 200]
+    noi_growth_steps_pct = [-5, -2.5, 0, 2.5, 5, 7.5, 10]
+
+    g = gearing_pct / 100
+    r0 = wacr_pct / 100
+    assets0 = nta_per_security / (1 - g)
+    debt = assets0 - nta_per_security
+
+    cells = []
+    for shift_bp in cap_rate_shifts_bp:
+        r1 = r0 + shift_bp / 10000
+        if r1 <= 0:
+            continue
+        for noi_growth_pct in noi_growth_steps_pct:
+            g_noi = noi_growth_pct / 100
+            new_assets = assets0 * r0 * (1 + g_noi) / r1
+            new_nta = new_assets - debt
+            pct_change = (new_nta - nta_per_security) / nta_per_security * 100
+            cells.append(
+                HeatmapCell(
+                    cap_rate_shift_bp=shift_bp,
+                    noi_growth_pct=noi_growth_pct,
+                    pct_change=round(pct_change, 1),
+                )
+            )
+
+    return HeatmapResult(
+        base_nta_per_security=round(nta_per_security, 3),
+        base_cap_rate_pct=wacr_pct,
+        cap_rate_shifts_bp=cap_rate_shifts_bp,
+        noi_growth_steps_pct=noi_growth_steps_pct,
+        cells=cells,
+    )
+
+
 class MonteCarloResult(BaseModel):
     base_nta_per_security: float
     base_cap_rate_pct: float

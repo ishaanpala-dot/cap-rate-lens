@@ -167,3 +167,102 @@ export async function getMonteCarlo(id: string): Promise<MonteCarloResult> {
   if (!res.ok) throw new Error("Failed to load simulation");
   return res.json();
 }
+
+export type CovenantResult = {
+  gearing_pct: number;
+  covenant_gearing_pct: number;
+  cap_rate_at_breach_pct: number;
+  bp_headroom: number;
+};
+
+export async function getCovenant(id: string): Promise<CovenantResult> {
+  const res = await fetch(`${API_BASE}/funds/${id}/covenant`);
+  if (!res.ok) throw new Error("Failed to load covenant headroom");
+  return res.json();
+}
+
+export type CovenantRankingRow = {
+  id: string;
+  name: string;
+  ticker: string;
+  gearing_pct: number;
+  bp_headroom: number;
+  cap_rate_at_breach_pct: number;
+};
+
+export type CovenantRankingResponse = {
+  covenant_gearing_pct: number;
+  rows: CovenantRankingRow[];
+  assumption_note: string;
+  coverage_note: string;
+};
+
+export async function getCovenantRanking(): Promise<CovenantRankingResponse> {
+  const res = await fetch(`${API_BASE}/covenant-ranking`);
+  if (!res.ok) throw new Error("Failed to load covenant ranking");
+  return res.json();
+}
+
+export type HeatmapCell = {
+  cap_rate_shift_bp: number;
+  noi_growth_pct: number;
+  pct_change: number;
+};
+
+export type HeatmapResponse = {
+  base_nta_per_security: number;
+  base_cap_rate_pct: number;
+  cap_rate_shifts_bp: number[];
+  noi_growth_steps_pct: number[];
+  cells: HeatmapCell[];
+};
+
+export async function getHeatmap(id: string): Promise<HeatmapResponse> {
+  const res = await fetch(`${API_BASE}/funds/${id}/heatmap`);
+  if (!res.ok) throw new Error("Failed to load heatmap");
+  return res.json();
+}
+
+export type CommentaryResponse = {
+  fund_id: string;
+  sentences: string[];
+};
+
+export async function getCommentary(id: string): Promise<CommentaryResponse> {
+  const res = await fetch(`${API_BASE}/funds/${id}/commentary`);
+  if (!res.ok) throw new Error("Failed to load commentary");
+  return res.json();
+}
+
+export type PortfolioHolding = {
+  fund_id: string;
+  amount: number;
+};
+
+export type PortfolioCurvePoint = {
+  cap_rate_shift_bp: number;
+  pct_change: number | null;
+};
+
+export type PortfolioResponse = {
+  holdings: { id: string; ticker: string; amount: number }[];
+  total_amount: number;
+  weighted_gearing_pct: number | null;
+  weighted_wacr_pct: number | null;
+  modelled_amount: number;
+  modelled_coverage_pct: number | null;
+  sensitivity_curve: PortfolioCurvePoint[];
+  sector_exposure: { sector: string; pct: number }[];
+  sector_exposure_coverage_pct: number | null;
+  note: string;
+};
+
+export async function postPortfolio(holdings: PortfolioHolding[]): Promise<PortfolioResponse> {
+  const res = await fetch(`${API_BASE}/portfolio`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ holdings }),
+  });
+  if (!res.ok) throw new Error("Failed to compute portfolio");
+  return res.json();
+}

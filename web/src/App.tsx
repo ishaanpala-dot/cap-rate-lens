@@ -9,6 +9,11 @@ import {
   getSectorExposure,
   getRiskRanking,
   getMonteCarlo,
+  getCovenant,
+  getCovenantRanking,
+  getHeatmap,
+  getCommentary,
+  postPortfolio,
   type Fund,
   type FundSummary,
   type SensitivityResult,
@@ -17,9 +22,24 @@ import {
   type SectorExposureResponse,
   type RiskRankingResponse,
   type MonteCarloResult,
+  type CovenantResult,
+  type CovenantRankingResponse,
+  type HeatmapResponse,
+  type CommentaryResponse,
+  type PortfolioResponse,
+  type PortfolioHolding,
 } from "./api";
-import { SpreadLineChart, SectorDonut, RiskBarChart, SECTOR_PALETTE } from "./Charts";
+import {
+  SpreadLineChart,
+  SectorDonut,
+  RiskBarChart,
+  CovenantBarChart,
+  Heatmap,
+  SensitivityCurveChart,
+  SECTOR_PALETTE,
+} from "./Charts";
 import About from "./About";
+import Portfolio from "./Portfolio";
 
 function formatPct(n: number | null | undefined, digits = 2) {
   if (n === null || n === undefined) return "n/a";
@@ -69,7 +89,7 @@ function SourceLine({ text, url }: { text: string | null | undefined; url?: stri
   );
 }
 
-type View = "detail" | "compare" | "sectors" | "about";
+type View = "detail" | "compare" | "sectors" | "portfolio" | "about";
 type SortKey = keyof Pick<
   CompareRow,
   "ticker" | "nta_per_security" | "wacr_pct" | "gearing_pct" | "wale_years" | "as_of"
@@ -90,6 +110,10 @@ export default function App() {
   const [sectorExposure, setSectorExposure] = useState<SectorExposureResponse | null>(null);
   const [riskRanking, setRiskRanking] = useState<RiskRankingResponse | null>(null);
   const [monteCarlo, setMonteCarlo] = useState<MonteCarloResult | null>(null);
+  const [covenant, setCovenant] = useState<CovenantResult | null>(null);
+  const [covenantRanking, setCovenantRanking] = useState<CovenantRankingResponse | null>(null);
+  const [heatmap, setHeatmap] = useState<HeatmapResponse | null>(null);
+  const [commentary, setCommentary] = useState<CommentaryResponse | null>(null);
 
   useEffect(() => {
     listFunds()
@@ -106,6 +130,9 @@ export default function App() {
     getRiskRanking()
       .then(setRiskRanking)
       .catch(() => setRiskRanking(null));
+    getCovenantRanking()
+      .then(setCovenantRanking)
+      .catch(() => setCovenantRanking(null));
   }, []);
 
   useEffect(() => {
@@ -121,6 +148,15 @@ export default function App() {
     getMonteCarlo(selectedId)
       .then(setMonteCarlo)
       .catch(() => setMonteCarlo(null));
+    getCovenant(selectedId)
+      .then(setCovenant)
+      .catch(() => setCovenant(null));
+    getHeatmap(selectedId)
+      .then(setHeatmap)
+      .catch(() => setHeatmap(null));
+    getCommentary(selectedId)
+      .then(setCommentary)
+      .catch(() => setCommentary(null));
   }, [selectedId]);
 
   useEffect(() => {
@@ -215,6 +251,9 @@ export default function App() {
           </TabButton>
           <TabButton active={view === "sectors"} onClick={() => setView("sectors")}>
             Sector exposure
+          </TabButton>
+          <TabButton active={view === "portfolio"} onClick={() => setView("portfolio")}>
+            Portfolio builder
           </TabButton>
           <TabButton active={view === "about"} onClick={() => setView("about")}>
             About
@@ -425,6 +464,65 @@ export default function App() {
                 </section>
               </div>
             )}
+
+            {commentary && commentary.sentences.length > 0 && (
+              <div className="mt-10 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  What the numbers say
+                </h3>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                  Generated from fixed templates filled with the figures above, not free-form text,
+                  so nothing here can state a number that isn't backed by the data on this page.
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+                  {commentary.sentences.map((s, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-zinc-300 dark:text-zinc-700">&bull;</span>
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {covenant && (
+              <div className="mt-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  Covenant headroom
+                </h3>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                  No tracked fund discloses an actual bank-loan gearing covenant, so this assumes a
+                  single {covenant.covenant_gearing_pct.toFixed(0)}% gearing threshold applied
+                  uniformly to every fund, not a reported figure.
+                </p>
+                <p className="tabular mt-3 text-2xl font-semibold">
+                  {covenant.bp_headroom.toFixed(0)}bp{" "}
+                  <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400">
+                    of cap rate rise until gearing reaches {covenant.covenant_gearing_pct.toFixed(0)}%
+                    (at {covenant.cap_rate_at_breach_pct.toFixed(2)}%)
+                  </span>
+                </p>
+              </div>
+            )}
+
+            {heatmap && (
+              <div className="mt-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
+                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  Cap rate vs. rent growth
+                </h3>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                  NTA per security % change for each combination. The 0% row/column is the current
+                  position; shows how much rent growth would offset a given cap rate move.
+                </p>
+                <div className="mt-3 overflow-x-auto">
+                  <Heatmap
+                    cells={heatmap.cells}
+                    xSteps={heatmap.cap_rate_shifts_bp}
+                    ySteps={heatmap.noi_growth_steps_pct}
+                  />
+                </div>
+              </div>
+            )}
           </>
         )}
 
@@ -516,6 +614,23 @@ export default function App() {
                 </p>
               </div>
             )}
+
+            {covenantRanking && covenantRanking.rows.length > 0 && (
+              <div className="mt-10">
+                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                  Covenant headroom ranking
+                </h3>
+                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                  {covenantRanking.assumption_note} Least headroom first.
+                </p>
+                <div className="mt-3">
+                  <CovenantBarChart rows={covenantRanking.rows} />
+                </div>
+                <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+                  {covenantRanking.coverage_note}
+                </p>
+              </div>
+            )}
           </>
         )}
 
@@ -573,6 +688,8 @@ export default function App() {
             </p>
           </div>
         )}
+
+        {view === "portfolio" && <Portfolio fundList={fundList} />}
 
         {view === "about" && <About />}
       </div>
