@@ -35,6 +35,7 @@ import {
   SECTOR_PALETTE,
 } from "./Charts";
 import About from "./About";
+import CaseStudy from "./CaseStudy";
 import Portfolio from "./Portfolio";
 
 function formatPct(n: number | null | undefined, digits = 2) {
@@ -85,7 +86,7 @@ function SourceLine({ text, url }: { text: string | null | undefined; url?: stri
   );
 }
 
-type View = "detail" | "compare" | "sectors" | "portfolio" | "about";
+type View = "detail" | "compare" | "sectors" | "portfolio" | "about" | "case-study";
 type SortKey = keyof Pick<
   CompareRow,
   "ticker" | "nta_per_security" | "wacr_pct" | "gearing_pct" | "wale_years" | "as_of"
@@ -256,6 +257,9 @@ export default function App() {
           </TabButton>
           <TabButton active={view === "about"} onClick={() => setView("about")}>
             About
+          </TabButton>
+          <TabButton active={view === "case-study"} onClick={() => setView("case-study")}>
+            Case study
           </TabButton>
         </div>
 
@@ -708,6 +712,8 @@ export default function App() {
         {view === "portfolio" && <Portfolio fundList={fundList} />}
 
         {view === "about" && <About />}
+
+        {view === "case-study" && <CaseStudy />}
       </div>
     </div>
   );
