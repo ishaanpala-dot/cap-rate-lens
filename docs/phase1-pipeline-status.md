@@ -76,3 +76,53 @@ process used throughout this session. No scheduled job, no unattended run.
    terms, not just the main domain's robots.txt).
 3. Charter Hall and Scentre need a different approach entirely (manual, or
    revisit if their site architecture changes) — don't retry the same method.
+
+## Follow-up: second WACR snapshot per fund (not yet done, 2026-10-20)
+
+The cap rate risk premium chart (`/funds/{id}/spread`, Fund detail tab) only
+renders for a fund when at least two of its snapshots each have a WACR, since
+it plots WACR vs. bond yield over time, not a single point. Today that's true
+for exactly one fund:
+
+- **DXS**: FY26 (6.06%) and 1H26 (6.19%) WACR both sourced — chart renders.
+- **GPT**: has two snapshots (1H26, FY25) but FY25's WACR was never sourced
+  (`null`) — correctly excluded rather than gap-filled, but means no chart.
+- All other 6 funds (CLW, MGR, SGP, GMG, SCG, VCX) only have one snapshot
+  tracked at all.
+
+**Next step, when picked up:** source a second historical WACR per fund (the
+prior half-year/full-year result) the same way the current single-snapshot
+data was sourced — read the primary ASX PDF directly, don't trust search
+summaries.
+
+## Update 2026-10-20: GPT fixed, found a real data bug along the way
+
+Went to fill in GPT's missing FY25 WACR (the lowest-effort target above) and
+found something worse than a gap: the existing `wacr_pct: 6.26` on GPT's
+1H26 snapshot was wrong. A web search summary had reported it as the
+fund's headline WACR; reading both primary ASX PDFs directly (GPT's 2026
+Interim Result, 17 Aug 2026, and 2025 Annual Result, 16 Feb 2026) showed
+GPT doesn't publish one portfolio-wide WACR at all, only a separate figure
+per segment (Retail, Office, Logistics). 6.26% was specifically the
+**Office segment's** cap rate, mislabeled as the fund-wide figure.
+
+Fixed in `api/data/funds.json`: GPT's `wacr_pct` is now `null` on both
+snapshots (honest, since no single figure exists to report), with `sectors`
+populated per segment (Office, Logistics — Retail's cap rate is disclosed
+but has no WALE in either release, so it's left out of the `sectors` array
+rather than guessing a WALE to make it fit the schema; noted in `source`).
+Gearing was also backfilled for FY25 (31.1%, was previously `null`).
+
+Net effect: GPT now has accurate data but dropped out of the leverage
+ranking and risk-premium chart, both of which need a single `wacr_pct`.
+That's the correct trade, a feature working on wrong data is worse than it
+not working. If a portfolio-level figure is ever needed for GPT, it would
+have to be a value-weighted combination of the per-sector cap rates against
+`sector_exposure.json`'s income-share weights, clearly labelled as
+calculated rather than reported, same pattern already used for its NTA
+sector-exposure split.
+
+This is a good reminder that "GPT's missing WACR" and "every fund's
+single-snapshot WACR already in the dataset" should both be re-verified
+against primary sources before being trusted, not just the gaps — a wrong
+number is worse than a missing one.

@@ -40,23 +40,47 @@
           "period": "1H26",
           "as_of": "2026-06-30",
           "nta_per_security": 5.61,
-          "wacr_pct": 6.26,
+          "wacr_pct": null,
           "gearing_pct": 31.5,
-          "sectors": [],
-          "wale_years": 4.7,
+          "sectors": [
+            {
+              "sector": "Office",
+              "wale_years": 4.8,
+              "cap_rate_pct": 6.26
+            },
+            {
+              "sector": "Logistics",
+              "wale_years": 4.9,
+              "cap_rate_pct": 5.61
+            }
+          ],
+          "wale_years": null,
           "occupancy_pct": 97.6,
-          "source": "ASX announcement 17 Aug 2026 (Appendix 4D, 1H26 results)"
+          "source": "GPT 2026 Interim Result, ASX announcement 17 Aug 2026 (p.2-3: segment WACR, Retail 5.41% not included above as no WALE is disclosed for it in this release; p.1: NTA, gearing, occupancy)",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260817/pdf/072t142kf20mzq.pdf"
         },
         {
           "period": "FY25",
           "as_of": "2025-12-31",
           "nta_per_security": 5.53,
           "wacr_pct": null,
-          "gearing_pct": null,
-          "sectors": [],
+          "gearing_pct": 31.1,
+          "sectors": [
+            {
+              "sector": "Office",
+              "wale_years": 4.8,
+              "cap_rate_pct": 6.26
+            },
+            {
+              "sector": "Logistics",
+              "wale_years": 5.0,
+              "cap_rate_pct": 5.59
+            }
+          ],
           "wale_years": null,
-          "occupancy_pct": null,
-          "source": "GPT Group Appendix 4D prior-period comparative"
+          "occupancy_pct": 97.6,
+          "source": "GPT Announces its 2025 Annual Result, ASX announcement 16 Feb 2026 (p.2-3: segment WACR, Retail 5.40% not included above as no WALE is disclosed for it in this release; p.1: NTA, gearing, occupancy)",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20260216/pdf/06wb8dhtc3rdsk.pdf"
         }
       ]
     },
