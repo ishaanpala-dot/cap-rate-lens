@@ -150,6 +150,15 @@ export async function getRiskRanking(): Promise<RiskRankingResponse> {
   return res.json();
 }
 
+export type MonteCarloCalibration = {
+  annualised_std_dev_pct: number;
+  daily_std_dev_pct: number;
+  n_daily_changes: number;
+  window_start: string;
+  window_end: string;
+  method: string;
+};
+
 export type MonteCarloResult = {
   base_nta_per_security: number;
   base_cap_rate_pct: number;
@@ -160,6 +169,7 @@ export type MonteCarloResult = {
   p50: number;
   p75: number;
   p90: number;
+  calibration: MonteCarloCalibration | null;
 };
 
 export async function getMonteCarlo(id: string): Promise<MonteCarloResult> {

@@ -453,8 +453,25 @@ export default function App() {
                           <p className="mt-1 text-xs text-[var(--ink-soft)]">
                             {monteCarlo.simulations.toLocaleString()} draws of a cap rate shift
                             (&plusmn;{Math.round(monteCarlo.shift_std_dev_pct * 100)}bp, 1 std.
-                            dev., a simplifying assumption) applied to the valuation model.
+                            dev.) applied to the valuation model.
                           </p>
+                          {monteCarlo.calibration ? (
+                            <p className="mt-1 text-xs text-[var(--ink-soft)]">
+                              Volatility is calibrated, not assumed: realised std. dev. of
+                              day-over-day moves in the RBA's 10-year government bond yield
+                              across {monteCarlo.calibration.n_daily_changes.toLocaleString()}{" "}
+                              trading days ({monteCarlo.calibration.window_start} to{" "}
+                              {monteCarlo.calibration.window_end}), annualised by &radic;252. Bond
+                              yield volatility is used as a proxy for cap rate volatility since
+                              there isn't yet enough public cap rate history to estimate it
+                              directly.
+                            </p>
+                          ) : (
+                            <p className="mt-1 text-xs text-[var(--ink-soft)]">
+                              Falls back to a flat &plusmn;50bp assumption: the RBA bond yield
+                              series needed to calibrate this wasn't available.
+                            </p>
+                          )}
                           <FanChart result={monteCarlo} />
                         </div>
                       )}

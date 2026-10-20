@@ -177,6 +177,7 @@ class MonteCarloResult(BaseModel):
     p50: float
     p75: float
     p90: float
+    calibration: dict | None = None
 
 
 def monte_carlo_nta(
@@ -186,13 +187,19 @@ def monte_carlo_nta(
     shift_std_dev_pct: float = 0.5,
     simulations: int = 5000,
     seed: int = 42,
+    calibration: dict | None = None,
 ) -> MonteCarloResult:
     """Simulate a distribution of NTA outcomes by sampling cap rate shifts from
     a normal distribution centred on the current WACR. shift_std_dev_pct is the
     standard deviation of that shift in percentage points (e.g. 0.5 means cap
-    rate moves of +/-0.5pp are a roughly one-standard-deviation outcome) —
-    a simplifying assumption, not a fitted volatility estimate, since the
-    public data here doesn't carry enough history to estimate real volatility."""
+    rate moves of +/-0.5pp are a roughly one-standard-deviation outcome).
+
+    When `calibration` is supplied (realised 10-year AGS yield volatility from
+    api/rba_bond_yields.py), shift_std_dev_pct should already be set from it by
+    the caller, and the dict is carried through on the result so the frontend
+    can show exactly how the number was derived rather than asserting it. If
+    calibration is None, shift_std_dev_pct is a flat fallback assumption, used
+    only if the RBA series couldn't be fetched."""
     rng = np.random.default_rng(seed)
     shifts = rng.normal(loc=0, scale=shift_std_dev_pct, size=simulations)
     simulated_cap_rates = np.clip(wacr_pct + shifts, 0.5, None)
@@ -218,4 +225,5 @@ def monte_carlo_nta(
         p50=round(float(p50), 3),
         p75=round(float(p75), 3),
         p90=round(float(p90), 3),
+        calibration=calibration,
     )

@@ -222,7 +222,7 @@ def get_risk_ranking():
 
 
 @app.get("/funds/{fund_id}/monte-carlo")
-def get_monte_carlo(fund_id: str, shift_std_dev_pct: float = 0.5):
+def get_monte_carlo(fund_id: str, shift_std_dev_pct: float | None = None):
     fund = FUNDS_BY_ID.get(fund_id)
     if not fund:
         raise HTTPException(status_code=404, detail="Fund not found")
@@ -234,11 +234,22 @@ def get_monte_carlo(fund_id: str, shift_std_dev_pct: float = 0.5):
             detail="This snapshot is missing WACR or gearing data, so the simulation can't run",
         )
 
+    calibration = None
+    std_dev = shift_std_dev_pct
+    if std_dev is None:
+        vol = rba_bond_yields.historical_volatility()
+        if vol is not None:
+            std_dev = vol["annualised_std_dev_pct"]
+            calibration = vol
+        else:
+            std_dev = 0.5  # fallback if the RBA series is unavailable
+
     return monte_carlo_nta(
         nta_per_security=snapshot["nta_per_security"],
         wacr_pct=snapshot["wacr_pct"],
         gearing_pct=snapshot["gearing_pct"],
-        shift_std_dev_pct=shift_std_dev_pct,
+        shift_std_dev_pct=std_dev,
+        calibration=calibration,
     )
 
 

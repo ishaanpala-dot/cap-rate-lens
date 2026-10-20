@@ -112,11 +112,17 @@ export default function About() {
           percentile outcomes.
         </p>
         <p>
-          The standard deviation used for that distribution (0.5 percentage points by
-          default) is a simplifying assumption, not a number fitted to historical
-          volatility, there isn't enough public quarterly history yet to estimate that
-          properly. That's stated directly in the tool rather than presented as more
-          rigorous than it is.
+          The standard deviation used for that distribution is calibrated, not guessed:
+          it's the realised volatility of day-over-day moves in the RBA's own 10-year
+          government bond yield series over roughly the last trading year, annualised by
+          the standard sqrt(252) scaling for a daily random walk. There isn't yet enough
+          public cap rate history (funds report WACR once or twice a year) to estimate
+          cap rate volatility directly, so bond yield volatility is used as a proxy, on
+          the basis that property cap rates and the risk-free rate they're priced off
+          tend to move together. That proxy, not real cap rate volatility, is the
+          honest limitation here, and it's stated directly under the chart along with
+          the exact window and sample size the number came from, rather than presented
+          as more precise than it is.
         </p>
       </Section>
 

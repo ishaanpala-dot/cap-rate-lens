@@ -15,6 +15,7 @@ import time
 from datetime import date, datetime
 
 import httpx
+import numpy as np
 
 RBA_F2_URL = "https://www.rba.gov.au/statistics/tables/csv/f2-data.csv"
 CACHE_TTL_SECONDS = 12 * 60 * 60  # refetch at most twice a day
@@ -93,6 +94,44 @@ def get_status() -> dict:
             datetime.fromtimestamp(_cache["fetched_at"]).isoformat() if _cache["fetched_at"] else None
         ),
         "last_error": _cache["error"],
+    }
+
+
+def historical_volatility(window_days: int = 252) -> dict | None:
+    """Realised annual volatility of the 10-year AGS yield, estimated from the
+    last `window_days` trading-day observations of RBA's own daily series:
+    std dev of day-over-day yield changes, annualised by sqrt(252) (the
+    standard trading-days-per-year scaling for a daily random walk).
+
+    This exists to replace an arbitrary flat assumption (e.g. "+/-50bp") in
+    the Monte Carlo cap rate simulation with a number actually estimated from
+    real market data, rather than guessed. It is still a simplification (daily
+    government bond yield volatility is a proxy for cap rate volatility, not
+    the same series), which is stated wherever this is surfaced, but it is a
+    genuine statistical estimate, not a made-up constant.
+
+    Returns None if there isn't enough history to estimate from (needs at
+    least 30 daily changes)."""
+    series = get_series()
+    if len(series) < 31:
+        return None
+
+    window = series[-(window_days + 1):]
+    yields = np.array([p["yield_pct"] for p in window])
+    daily_changes = np.diff(yields)
+    if len(daily_changes) < 30:
+        return None
+
+    daily_std = float(np.std(daily_changes, ddof=1))
+    annualised_std = daily_std * (252 ** 0.5)
+
+    return {
+        "annualised_std_dev_pct": round(annualised_std, 3),
+        "daily_std_dev_pct": round(daily_std, 4),
+        "n_daily_changes": len(daily_changes),
+        "window_start": window[0]["as_of"],
+        "window_end": window[-1]["as_of"],
+        "method": "std dev of day-over-day changes in RBA's 10-year AGS yield series, annualised by sqrt(252)",
     }
 
 
