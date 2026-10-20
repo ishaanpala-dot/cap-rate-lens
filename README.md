@@ -109,6 +109,18 @@ npm run dev
 The dev server proxies to `http://localhost:8000` by default (see
 `web/src/api.ts`); set `VITE_API_BASE` to point elsewhere.
 
+**Tests**
+
+```bash
+cd api
+pip install -r requirements-dev.txt
+pytest
+```
+
+Unit tests cover the pure valuation math (`tests/test_valuation.py`) and the
+RBA CSV parsing / volatility calibration (`tests/test_rba_bond_yields.py`),
+against hand-worked expected values rather than just checking the code runs.
+
 ## Honest limitations
 
 - Coverage is eight funds, not the full ASX property sector.
