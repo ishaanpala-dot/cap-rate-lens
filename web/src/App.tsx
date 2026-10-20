@@ -58,7 +58,7 @@ function NotSourced() {
   return (
     <span
       title={NOT_SOURCED_HINT}
-      className="cursor-help border-b border-dotted border-zinc-400 text-zinc-400 dark:border-zinc-600 dark:text-zinc-500"
+      className="cursor-help border-b border-dotted border-[var(--ink-soft)] text-[var(--ink-soft)]"
     >
       n/a
     </span>
@@ -68,15 +68,15 @@ function NotSourced() {
 function SourceLine({ text, url }: { text: string | null | undefined; url?: string | null }) {
   if (!text) return null;
   if (!url) {
-    return <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">{text}</p>;
+    return <p className="mt-6 text-xs text-[var(--ink-soft)]">{text}</p>;
   }
   return (
-    <p className="mt-6 text-xs text-zinc-400 dark:text-zinc-500">
+    <p className="mt-6 text-xs text-[var(--ink-soft)]">
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-start gap-1 underline decoration-dotted underline-offset-2 hover:text-zinc-600 dark:hover:text-zinc-300"
+        className="inline-flex items-start gap-1 underline decoration-dotted underline-offset-2 hover:text-[var(--ink)]"
       >
         <span>{text}</span>
         <ArrowSquareOut weight="bold" size={11} className="mt-0.5 shrink-0" />
@@ -207,8 +207,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#fafaf9] text-zinc-900 dark:bg-[#0a0b0d] dark:text-zinc-100">
-      <nav className="sticky top-0 z-10 border-b border-zinc-200 bg-[#fafaf9]/90 backdrop-blur dark:border-zinc-800 dark:bg-[#0a0b0d]/90">
+    <div className="min-h-[100dvh] bg-[var(--paper)] text-[var(--ink)]">
+      <nav className="sticky top-0 z-10 border-b border-[var(--rule)] bg-[var(--paper)]/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-2 px-5">
           <span
             className="flex h-6 w-6 items-center justify-center rounded text-white"
@@ -216,16 +216,19 @@ export default function App() {
           >
             <ChartLineUp weight="bold" size={14} />
           </span>
-          <span className="font-display text-sm font-semibold">Cap Rate Lens</span>
+          <span className="text-sm font-semibold tracking-wide uppercase">Cap Rate Lens</span>
         </div>
       </nav>
 
       <div className="mx-auto max-w-5xl px-5 py-10 md:py-12">
         <header className="mb-10">
-          <h1 className="font-display text-2xl md:text-3xl font-semibold tracking-tight max-w-[22ch]">
+          <p className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: "var(--accent)" }}>
+            Cap Rate Lens
+          </p>
+          <h1 className="font-display mt-2 text-3xl md:text-4xl font-semibold tracking-tight max-w-[22ch]">
             How cap rate moves reshape ASX property trust valuations
           </h1>
-          <p className="mt-3 max-w-[60ch] text-zinc-600 dark:text-zinc-400">
+          <p className="mt-3 max-w-[60ch] text-[var(--ink-soft)]">
             Compare WACR, gearing and NTA across major ASX-listed property trusts, or pick one
             fund and move its cap rate to see net tangible assets respond. Figures are sourced
             from each fund's public ASX announcements.
@@ -238,7 +241,7 @@ export default function App() {
           </div>
         )}
 
-        <div className="mb-8 flex gap-2 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="mb-8 flex gap-2 border-b border-[var(--rule)]">
           <TabButton active={view === "detail"} onClick={() => setView("detail")}>
             Fund detail
           </TabButton>
@@ -267,7 +270,7 @@ export default function App() {
                   className={`tabular rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     selectedId === f.id
                       ? "text-white"
-                      : "border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+                      : "border-[var(--rule)] bg-[var(--card)] text-[var(--ink)] hover:border-[var(--ink-soft)]"
                   }`}
                 >
                   {f.ticker}
@@ -279,12 +282,12 @@ export default function App() {
               <div className="grid gap-10 md:grid-cols-[1.1fr_1fr]">
                 <section>
                   <h2 className="font-display text-xl font-semibold">{fund.name}</h2>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  <p className="text-sm text-[var(--ink-soft)]">
                     {snapshot.period}, as of {snapshot.as_of}
                     <StaleBadge asOf={snapshot.as_of} latestAsOf={latestAsOf} />
                   </p>
 
-                  <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-zinc-200 bg-zinc-200 dark:border-zinc-800 dark:bg-zinc-800">
+                  <div className="mt-6 grid grid-cols-2 border-t border-[var(--rule)]">
                     <Metric label="NTA per security" value={formatDollar(snapshot.nta_per_security)} />
                     <Metric
                       label="WACR"
@@ -302,7 +305,7 @@ export default function App() {
                         ) : snapshot.computed_wale ? (
                           <span
                             title={`Value-weighted across ${snapshot.computed_wale.coverage_pct}% of the portfolio (sectors with both a WALE and a known exposure %)`}
-                            className="cursor-help border-b border-dotted border-zinc-400"
+                            className="cursor-help border-b border-dotted border-[var(--ink-soft)]"
                           >
                             ~{snapshot.computed_wale.value.toFixed(1)}y
                           </span>
@@ -315,16 +318,16 @@ export default function App() {
 
                   {snapshot.sectors.length > 0 && (
                     <div className="mt-6">
-                      <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                         Sector cap rates
                       </h3>
-                      <div className="mt-2 divide-y divide-zinc-200 dark:divide-zinc-800">
+                      <div className="mt-2 divide-y divide-[var(--rule)]">
                         {snapshot.sectors.map((s) => (
                           <div key={s.sector} className="flex items-center justify-between py-2 text-sm">
                             <span>{s.sector}</span>
-                            <span className="tabular flex gap-4 text-zinc-600 dark:text-zinc-400">
+                            <span className="tabular flex gap-4 text-[var(--ink-soft)]">
                               <span>{s.wale_years.toFixed(1)}y WALE</span>
-                              <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                              <span className="font-medium text-[var(--ink)]">
                                 {formatPct(s.cap_rate_pct)}
                               </span>
                             </span>
@@ -338,45 +341,45 @@ export default function App() {
 
                   {spread && spread.points.length >= 2 && (
                     <div className="mt-8">
-                      <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                         Cap rate risk premium
                       </h3>
-                      <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                      <p className="mt-1 text-xs text-[var(--ink-soft)]">
                         Solid line is WACR, dashed line is the 10-year Australian government bond
                         yield. The shaded gap is the risk premium.
                       </p>
                       <div className="mt-3">
                         <SpreadLineChart points={spread.points} />
                       </div>
-                      <div className="mt-1 flex gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+                      <div className="mt-1 flex gap-4 text-xs text-[var(--ink-soft)]">
                         <span className="inline-flex items-center gap-1.5">
                           <span className="h-0.5 w-3" style={{ background: "var(--accent)" }} />
                           WACR
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="h-0.5 w-3 border-t-2 border-dashed border-zinc-400" />
+                          <span className="h-0.5 w-3 border-t-2 border-dashed border-[var(--ink-soft)]" />
                           10y bond yield
                         </span>
                       </div>
-                      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-3 text-xs text-[var(--ink-soft)]">
                         {spread.points[spread.points.length - 1].spread_pct < spread.points[0].spread_pct
                           ? "The premium has compressed over this period, bond yields moved up faster than this fund's cap rate."
                           : "The premium has widened over this period, this fund's cap rate moved up faster than bond yields."}
                         {spread.points.length === 2 &&
                           " Based on only two data points so far, treat this as indicative rather than a confirmed trend."}
                       </p>
-                      <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">{spread.bond_source}</p>
+                      <p className="mt-2 text-xs text-[var(--ink-soft)]">{spread.bond_source}</p>
                     </div>
                   )}
                 </section>
 
-                <section className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
-                  <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                <section className="border border-[var(--rule)] bg-[var(--card)] p-6">
+                  <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                     Cap rate sensitivity
                   </h3>
 
                   {!hasModel ? (
-                    <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-4 text-sm text-[var(--ink-soft)]">
                       This fund's latest snapshot doesn't report both WACR and gearing, so the
                       sensitivity model can't run for it yet.
                     </p>
@@ -384,10 +387,10 @@ export default function App() {
                     <>
                       <div className="mt-4">
                         <div className="flex items-baseline justify-between">
-                          <span className="tabular text-4xl font-semibold">
+                          <span className="tabular font-display text-4xl font-semibold">
                             {capRate.toFixed(2)}%
                           </span>
-                          <span className="tabular text-sm text-zinc-500 dark:text-zinc-400">
+                          <span className="tabular text-sm text-[var(--ink-soft)]">
                             base {formatPct(sliderRange.base)}
                             {Math.abs(capRate - sliderRange.base) > 0.001 && (
                               <span className="ml-1.5">({formatBp(capRate - sliderRange.base)})</span>
@@ -404,28 +407,28 @@ export default function App() {
                           style={{ accentColor: "var(--accent)" }}
                           className="mt-3 w-full"
                         />
-                        <div className="mt-1 flex justify-between text-xs text-zinc-400">
+                        <div className="mt-1 flex justify-between text-xs text-[var(--ink-soft)]">
                           <span>{sliderRange.min.toFixed(1)}%</span>
                           <span>{sliderRange.max.toFixed(1)}%</span>
                         </div>
                       </div>
 
                       {sensitivity && (
-                        <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+                        <div className="mt-6 border-t border-[var(--rule)] pt-6">
                           <div className="flex items-end justify-between">
                             <div>
-                              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                              <p className="text-sm text-[var(--ink-soft)]">
                                 Implied NTA per security
                               </p>
-                              <p className="tabular text-3xl font-semibold">
+                              <p className="font-display tabular text-3xl font-semibold">
                                 {formatDollar(sensitivity.new_nta_per_security)}
                               </p>
                             </div>
                             <p
                               className={`tabular flex items-center gap-1 text-lg font-medium ${
                                 sensitivity.pct_change >= 0
-                                  ? "text-emerald-600 dark:text-emerald-400"
-                                  : "text-red-600 dark:text-red-400"
+                                  ? "text-emerald-700 dark:text-emerald-400"
+                                  : "text-red-700 dark:text-red-400"
                               }`}
                             >
                               <CaretDown
@@ -435,7 +438,7 @@ export default function App() {
                               {Math.abs(sensitivity.pct_change).toFixed(1)}%
                             </p>
                           </div>
-                          <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                          <p className="mt-3 text-xs text-[var(--ink-soft)]">
                             Assumes net operating income is unchanged and debt is fixed, so the full
                             swing in asset value flows through to equity.
                           </p>
@@ -443,11 +446,11 @@ export default function App() {
                       )}
 
                       {monteCarlo && (
-                        <div className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-800">
-                          <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        <div className="mt-6 border-t border-[var(--rule)] pt-6">
+                          <h4 className="text-sm font-medium text-[var(--ink-soft)]">
                             Simulated NTA range (Monte Carlo)
                           </h4>
-                          <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                          <p className="mt-1 text-xs text-[var(--ink-soft)]">
                             {monteCarlo.simulations.toLocaleString()} draws of a cap rate shift
                             (&plusmn;{Math.round(monteCarlo.shift_std_dev_pct * 100)}bp, 1 std.
                             dev., a simplifying assumption) applied to the valuation model.
@@ -462,18 +465,18 @@ export default function App() {
             )}
 
             {commentary && commentary.sentences.length > 0 && (
-              <div className="mt-10 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
-                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              <div className="mt-10 border border-[var(--rule)] bg-[var(--card)] p-6">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                   What the numbers say
                 </h3>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
                   Generated from fixed templates filled with the figures above, not free-form text,
                   so nothing here can state a number that isn't backed by the data on this page.
                 </p>
-                <ul className="mt-3 space-y-2 text-sm text-zinc-700 dark:text-zinc-300">
+                <ul className="mt-3 space-y-2 text-sm text-[var(--ink)]">
                   {commentary.sentences.map((s, i) => (
                     <li key={i} className="flex gap-2">
-                      <span className="text-zinc-300 dark:text-zinc-700">&bull;</span>
+                      <span className="text-[var(--ink-soft)]">&bull;</span>
                       <span>{s}</span>
                     </li>
                   ))}
@@ -482,18 +485,18 @@ export default function App() {
             )}
 
             {covenant && (
-              <div className="mt-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
-                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              <div className="mt-6 border border-[var(--rule)] bg-[var(--card)] p-6">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                   Covenant headroom
                 </h3>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
                   No tracked fund discloses an actual bank-loan gearing covenant, so this assumes a
                   single {covenant.covenant_gearing_pct.toFixed(0)}% gearing threshold applied
                   uniformly to every fund, not a reported figure.
                 </p>
-                <p className="tabular mt-3 text-2xl font-semibold">
+                <p className="font-display tabular mt-3 text-2xl font-semibold">
                   {covenant.bp_headroom.toFixed(0)}bp{" "}
-                  <span className="text-sm font-normal text-zinc-500 dark:text-zinc-400">
+                  <span className="font-sans text-sm font-normal text-[var(--ink-soft)]">
                     of cap rate rise until gearing reaches {covenant.covenant_gearing_pct.toFixed(0)}%
                     (at {covenant.cap_rate_at_breach_pct.toFixed(2)}%)
                   </span>
@@ -502,11 +505,11 @@ export default function App() {
             )}
 
             {heatmap && (
-              <div className="mt-6 rounded-xl border border-zinc-200 p-6 dark:border-zinc-800">
-                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              <div className="mt-6 border border-[var(--rule)] bg-[var(--card)] p-6">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                   Cap rate vs. rent growth
                 </h3>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
                   NTA per security % change for each combination. The 0% row/column is the current
                   position; shows how much rent growth would offset a given cap rate move.
                 </p>
@@ -524,17 +527,17 @@ export default function App() {
 
         {view === "compare" && (
           <>
-            <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <div className="overflow-x-auto border border-[var(--rule)]">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 bg-zinc-50 text-left dark:border-zinc-800 dark:bg-zinc-900">
+                  <tr className="border-b border-[var(--rule)] bg-[var(--accent-soft)]/40 text-left">
                     <SortableHeader label="Fund" sortKey="ticker" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="NTA" sortKey="nta_per_security" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="WACR" sortKey="wacr_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="Gearing" sortKey="gearing_pct" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="WALE" sortKey="wale_years" active={sortKey} dir={sortDir} onSort={toggleSort} />
                     <SortableHeader label="As of" sortKey="as_of" active={sortKey} dir={sortDir} onSort={toggleSort} />
-                    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">Source</th>
+                    <th className="px-4 py-3 font-medium text-[var(--ink-soft)]">Source</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -545,11 +548,11 @@ export default function App() {
                         setSelectedId(r.id);
                         setView("detail");
                       }}
-                      className="cursor-pointer border-b border-zinc-100 last:border-0 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900"
+                      className="cursor-pointer border-b border-[var(--rule)] last:border-0 hover:bg-[var(--accent-soft)]/30"
                     >
                       <td className="px-4 py-3">
                         <span className="font-medium">{r.ticker}</span>
-                        <span className="ml-2 text-zinc-500 dark:text-zinc-400">{r.name}</span>
+                        <span className="ml-2 text-[var(--ink-soft)]">{r.name}</span>
                       </td>
                       <td className="tabular px-4 py-3">{formatDollar(r.nta_per_security)}</td>
                       <td className="tabular px-4 py-3">{r.wacr_pct !== null ? formatPct(r.wacr_pct) : <NotSourced />}</td>
@@ -558,14 +561,14 @@ export default function App() {
                         {r.wale_years ? (
                           `${r.wale_years.toFixed(1)}y`
                         ) : r.computed_wale ? (
-                          <span title={`Value-weighted across ${r.computed_wale.coverage_pct}% of the portfolio (sectors with both a WALE and a known exposure %)`} className="cursor-help border-b border-dotted border-zinc-400">
+                          <span title={`Value-weighted across ${r.computed_wale.coverage_pct}% of the portfolio (sectors with both a WALE and a known exposure %)`} className="cursor-help border-b border-dotted border-[var(--ink-soft)]">
                             ~{r.computed_wale.value.toFixed(1)}y
                           </span>
                         ) : (
                           <NotSourced />
                         )}
                       </td>
-                      <td className="tabular px-4 py-3 text-zinc-500 dark:text-zinc-400">
+                      <td className="tabular px-4 py-3 text-[var(--ink-soft)]">
                         {r.as_of}
                         <StaleBadge asOf={r.as_of} latestAsOf={latestAsOf} />
                       </td>
@@ -577,12 +580,12 @@ export default function App() {
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             title={r.source ?? undefined}
-                            className="inline-flex text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                            className="inline-flex text-[var(--ink-soft)] hover:text-[var(--ink)]"
                           >
                             <ArrowSquareOut weight="bold" size={14} />
                           </a>
                         ) : (
-                          <span title={r.source ?? NOT_SOURCED_HINT} className="cursor-help text-zinc-300 dark:text-zinc-700">
+                          <span title={r.source ?? NOT_SOURCED_HINT} className="cursor-help text-[var(--rule)]">
                             <ArrowSquareOut weight="bold" size={14} />
                           </span>
                         )}
@@ -595,17 +598,17 @@ export default function App() {
 
             {riskRanking && riskRanking.rows.length > 0 && (
               <div className="mt-10">
-                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                   Leverage risk ranking
                 </h3>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
                   NTA per security change for a +100bp rise in cap rate, worst-affected first.
                   Higher gearing amplifies the same cap rate move into a larger equity swing.
                 </p>
                 <div className="mt-3">
                   <RiskBarChart rows={riskRanking.rows} />
                 </div>
-                <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-3 text-xs text-[var(--ink-soft)]">
                   {riskRanking.coverage_note}
                 </p>
               </div>
@@ -613,16 +616,16 @@ export default function App() {
 
             {covenantRanking && covenantRanking.rows.length > 0 && (
               <div className="mt-10">
-                <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
                   Covenant headroom ranking
                 </h3>
-                <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
                   {covenantRanking.assumption_note} Least headroom first.
                 </p>
                 <div className="mt-3">
                   <CovenantBarChart rows={covenantRanking.rows} />
                 </div>
-                <p className="mt-3 text-xs text-zinc-400 dark:text-zinc-500">
+                <p className="mt-3 text-xs text-[var(--ink-soft)]">
                   {covenantRanking.coverage_note}
                 </p>
               </div>
@@ -638,21 +641,21 @@ export default function App() {
                 return (
                   <div
                     key={f.id}
-                    className="rounded-xl border border-zinc-200 p-5 dark:border-zinc-800"
+                    className="border border-[var(--rule)] bg-[var(--card)] p-5"
                   >
                     <div className="flex items-start gap-4">
                       <SectorDonut sectors={f.sectors} />
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <Buildings weight="bold" size={14} className="text-zinc-400" />
+                          <Buildings weight="bold" size={14} className="text-[var(--ink-soft)]" />
                           <h3 className="font-display text-sm font-semibold">
                             {fundMeta?.ticker} &middot; {fundMeta?.name}
                           </h3>
                         </div>
-                        <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">as of {f.as_of}</p>
+                        <p className="mt-0.5 text-xs text-[var(--ink-soft)]">as of {f.as_of}</p>
                         <div className="mt-3 space-y-1">
                           {f.sectors.map((s, i) => (
-                            <div key={s.sector} className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+                            <div key={s.sector} className="flex items-center gap-1.5 text-xs text-[var(--ink-soft)]">
                               <span
                                 className="h-2 w-2 shrink-0 rounded-full"
                                 style={{ background: SECTOR_PALETTE[i % SECTOR_PALETTE.length] }}
@@ -664,13 +667,13 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-500">{f.note}</p>
+                    <p className="mt-4 text-xs text-[var(--ink-soft)]">{f.note}</p>
                     {f.source_url && (
                       <a
                         href={f.source_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-xs text-zinc-400 underline decoration-dotted underline-offset-2 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+                        className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--ink-soft)] underline decoration-dotted underline-offset-2 hover:text-[var(--ink)]"
                       >
                         View source <ArrowSquareOut weight="bold" size={11} />
                       </a>
@@ -679,7 +682,7 @@ export default function App() {
                 );
               })}
             </div>
-            <p className="mt-8 border-t border-zinc-200 pt-4 text-xs text-zinc-400 dark:border-zinc-800 dark:text-zinc-500">
+            <p className="mt-8 border-t border-[var(--rule)] pt-4 text-xs text-[var(--ink-soft)]">
               {sectorExposure.coverage_note}
             </p>
           </div>
@@ -708,8 +711,8 @@ function TabButton({
       style={active ? { borderColor: "var(--accent)" } : undefined}
       className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
         active
-          ? "text-zinc-900 dark:text-zinc-100"
-          : "border-transparent text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+          ? "text-[var(--ink)]"
+          : "border-transparent text-[var(--ink-soft)] hover:text-[var(--ink)]"
       }`}
     >
       {children}
@@ -749,9 +752,9 @@ function FanChart({ result }: { result: MonteCarloResult }) {
           style={{ left: `${pct(result.p50)}%`, background: "var(--accent)" }}
         />
       </div>
-      <div className="tabular mt-2 flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
+      <div className="tabular mt-2 flex justify-between text-xs text-[var(--ink-soft)]">
         <span>p10 {formatDollar(result.p10)}</span>
-        <span className="font-medium text-zinc-900 dark:text-zinc-100">
+        <span className="font-medium text-[var(--ink)]">
           median {formatDollar(result.p50)}
         </span>
         <span>p90 {formatDollar(result.p90)}</span>
@@ -775,7 +778,7 @@ function SortableHeader({
 }) {
   const isActive = active === sortKey;
   return (
-    <th className="px-4 py-3 font-medium text-zinc-500 dark:text-zinc-400">
+    <th className="px-4 py-3 font-medium text-[var(--ink-soft)]">
       <button
         onClick={() => onSort(sortKey)}
         aria-sort={isActive ? (dir === "asc" ? "ascending" : "descending") : "none"}
@@ -792,9 +795,9 @@ function SortableHeader({
 
 function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="bg-white p-4 dark:bg-zinc-950">
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
-      <p className="tabular mt-1 text-2xl font-semibold">{value}</p>
+    <div className="border-b border-r border-[var(--rule)] p-4 [&:nth-child(2n)]:border-r-0">
+      <p className="text-xs text-[var(--ink-soft)]">{label}</p>
+      <p className="font-display tabular mt-1 text-2xl font-semibold">{value}</p>
     </div>
   );
 }

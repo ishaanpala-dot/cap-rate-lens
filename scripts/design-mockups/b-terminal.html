@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #ffb000; --bg: #0a0a0a; --fg: #c9c9c9; --dim: #5a5a5a; --line: #2a2a2a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+  .bar { color: var(--accent); font-size: 12px; margin-bottom: 4px; }
+  h1 { font-size: 22px; font-weight: 700; color: #f2f2f2; margin: 8px 0 10px; line-height: 1.3; }
+  .dek { color: var(--dim); max-width: 70ch; line-height: 1.6; font-size: 12.5px; }
+  .divider { border: none; border-top: 1px dashed var(--line); margin: 24px 0; }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
+  .metric { padding: 14px 16px; border-right: 1px solid var(--line); }
+  .metric:last-child { border-right: none; }
+  .metric .label { color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric .value { color: var(--accent); font-size: 22px; margin-top: 6px; font-weight: 700; }
+  .section-title { color: #f2f2f2; font-size: 13px; margin: 28px 0 4px; }
+  .section-title::before { content: "> "; color: var(--accent); }
+  .note { color: var(--dim); font-size: 11.5px; margin-top: 8px; }
+  svg text { font-family: 'JetBrains Mono', monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">[CAP_RATE_LENS] v1 :: ASX property trust valuations</div>
+  <h1>How cap rate moves reshape ASX property trust valuations</h1>
+  <p class="dek">Compare WACR, gearing and NTA across major ASX-listed property trusts, or pick one fund and move its cap rate to see net tangible assets respond.</p>
+  <hr class="divider">
+  <div class="metrics">
+    <div class="metric"><div class="label">NTA/SEC</div><div class="value">$8.92</div></div>
+    <div class="metric"><div class="label">WACR</div><div class="value">6.06%</div></div>
+    <div class="metric"><div class="label">GEARING</div><div class="value">33.4%</div></div>
+    <div class="metric"><div class="label">WALE</div><div class="value">~4.2y</div></div>
+  </div>
+  <div class="section-title">CAP_RATE_RISK_PREMIUM</div>
+  <svg viewBox="0 0 700 170" width="100%">
+    <line x1="40" y1="20" x2="660" y2="20" stroke="#2a2a2a"/>
+    <line x1="40" y1="80" x2="660" y2="80" stroke="#2a2a2a"/>
+    <line x1="40" y1="140" x2="660" y2="140" stroke="#2a2a2a"/>
+    <path d="M 60 40 L 640 50" stroke="#ffb000" stroke-width="2" fill="none"/>
+    <path d="M 60 130 L 640 90" stroke="#5a5a5a" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+    <circle cx="60" cy="40" r="3" fill="#ffb000"/>
+    <circle cx="640" cy="50" r="3" fill="#ffb000"/>
+    <text x="42" y="16" font-size="10" fill="#5a5a5a">6.5%</text>
+    <text x="42" y="144" font-size="10" fill="#5a5a5a">4.4%</text>
+  </svg>
+  <p class="note">WACR (solid) vs 10y bond yield (dashed), src: RBA F2 / FCMYGBAG10D</p>
+</div>
+</body>
+</html>

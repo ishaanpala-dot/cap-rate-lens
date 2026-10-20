@@ -1,6 +1,6 @@
 import type { SpreadPoint, HeatmapCell, PortfolioCurvePoint } from "./api";
 
-const SECTOR_PALETTE = ["#2451d6", "#6690ea", "#a8b8d8", "#d8dde8"];
+const SECTOR_PALETTE = ["#3f5f44", "#7f9c82", "#b9c7ad", "#dfdccb"];
 
 export function SpreadLineChart({ points }: { points: SpreadPoint[] }) {
   if (points.length < 2) return null;
@@ -47,28 +47,28 @@ export function SpreadLineChart({ points }: { points: SpreadPoint[] }) {
             x2={W - padR}
             y1={y(v)}
             y2={y(v)}
-            className="stroke-zinc-200 dark:stroke-zinc-800"
+            className="stroke-[var(--rule)]"
             strokeWidth={1}
           />
-          <text x={padL - 6} y={y(v) + 3} textAnchor="end" className="fill-zinc-400 font-mono text-[9px]">
+          <text x={padL - 6} y={y(v) + 3} textAnchor="end" className="fill-[var(--ink-soft)] font-mono text-[9px]">
             {v.toFixed(1)}%
           </text>
         </g>
       ))}
 
       <path d={areaPath} style={{ fill: "var(--accent)", opacity: 0.08 }} />
-      <path d={bondPath} className="fill-none stroke-zinc-400 dark:stroke-zinc-600" strokeWidth={1.5} strokeDasharray="3 3" />
+      <path d={bondPath} className="fill-none stroke-[var(--ink-soft)]" strokeWidth={1.5} strokeDasharray="3 3" />
       <path d={wacrPath} style={{ stroke: "var(--accent)" }} className="fill-none" strokeWidth={2} />
 
       {points.map((p, i) => (
         <g key={p.as_of}>
           <circle cx={x(i)} cy={y(p.wacr_pct)} r={3} style={{ fill: "var(--accent)" }} />
-          <circle cx={x(i)} cy={y(p.bond_yield_pct)} r={2.5} className="fill-zinc-400 dark:fill-zinc-600" />
+          <circle cx={x(i)} cy={y(p.bond_yield_pct)} r={2.5} className="fill-[var(--ink-soft)]" />
           <text
             x={x(i)}
             y={H - 4}
             textAnchor="middle"
-            className="fill-zinc-400 font-mono text-[9px]"
+            className="fill-[var(--ink-soft)] font-mono text-[9px]"
           >
             {p.period}
           </text>
@@ -133,22 +133,22 @@ export function RiskBarChart({
         const cy = 14 + i * rowH;
         return (
           <g key={r.ticker}>
-            <text x={padL - 8} y={cy + 4} textAnchor="end" className="fill-zinc-700 dark:fill-zinc-300 font-mono text-[11px] font-medium">
+            <text x={padL - 8} y={cy + 4} textAnchor="end" className="fill-[var(--ink)] font-mono text-[11px] font-medium">
               {r.ticker}
             </text>
-            <rect x={padL} y={cy - 7} width={plotW} height={14} className="fill-zinc-100 dark:fill-zinc-900" rx={2} />
+            <rect x={padL} y={cy - 7} width={plotW} height={14} className="fill-[var(--rule)]/30" rx={2} />
             <rect
               x={padL}
               y={cy - 7}
               width={barW}
               height={14}
-              className="fill-[#c23b3b] dark:fill-[#e05a5a]"
+              className="fill-[#9a3b2e] dark:fill-[#c0604f]"
               rx={2}
             />
             <text
               x={padL + plotW + 8}
               y={cy + 4}
-              className="fill-zinc-500 dark:fill-zinc-400 font-mono text-[10px]"
+              className="fill-[var(--ink-soft)] font-mono text-[10px]"
             >
               {r.pct_change_per_1pct_cap_rate_rise.toFixed(1)}%
             </text>
@@ -179,12 +179,12 @@ export function CovenantBarChart({
         const cy = 14 + i * rowH;
         return (
           <g key={r.ticker}>
-            <text x={padL - 8} y={cy + 4} textAnchor="end" className="fill-zinc-700 dark:fill-zinc-300 font-mono text-[11px] font-medium">
+            <text x={padL - 8} y={cy + 4} textAnchor="end" className="fill-[var(--ink)] font-mono text-[11px] font-medium">
               {r.ticker}
             </text>
-            <rect x={padL} y={cy - 7} width={plotW} height={14} className="fill-zinc-100 dark:fill-zinc-900" rx={2} />
+            <rect x={padL} y={cy - 7} width={plotW} height={14} className="fill-[var(--rule)]/30" rx={2} />
             <rect x={padL} y={cy - 7} width={barW} height={14} style={{ fill: "var(--accent)" }} rx={2} />
-            <text x={padL + plotW + 8} y={cy + 4} className="fill-zinc-500 dark:fill-zinc-400 font-mono text-[10px]">
+            <text x={padL + plotW + 8} y={cy + 4} className="fill-[var(--ink-soft)] font-mono text-[10px]">
               {r.bp_headroom.toFixed(0)}bp
             </text>
           </g>
@@ -215,10 +215,9 @@ export function Heatmap({
   const colorFor = (v: number) => {
     const t = Math.min(Math.abs(v) / maxAbs, 1);
     if (v >= 0) {
-      // positive: accent blue tint
-      return `rgba(36,81,214,${0.12 + t * 0.6})`;
+      return `rgba(63,95,68,${0.12 + t * 0.6})`;
     }
-    return `rgba(194,59,59,${0.12 + t * 0.6})`;
+    return `rgba(154,59,46,${0.12 + t * 0.6})`;
   };
 
   const yOrdered = [...ySteps].reverse();
@@ -231,7 +230,7 @@ export function Heatmap({
           x={padL + xi * cellW + cellW / 2}
           y={padT - 6}
           textAnchor="middle"
-          className="fill-zinc-400 font-mono text-[9px]"
+          className="fill-[var(--ink-soft)] font-mono text-[9px]"
         >
           {x >= 0 ? `+${x}` : x}
         </text>
@@ -242,7 +241,7 @@ export function Heatmap({
           x={padL - 6}
           y={padT + yi * cellH + cellH / 2 + 3}
           textAnchor="end"
-          className="fill-zinc-400 font-mono text-[9px]"
+          className="fill-[var(--ink-soft)] font-mono text-[9px]"
         >
           {y >= 0 ? `+${y}%` : `${y}%`}
         </text>
@@ -264,7 +263,7 @@ export function Heatmap({
                 x={padL + xi * cellW + cellW / 2}
                 y={padT + yi * cellH + cellH / 2 + 3}
                 textAnchor="middle"
-                className="fill-zinc-700 dark:fill-zinc-200 font-mono text-[9px]"
+                className="fill-[var(--ink)] font-mono text-[9px]"
               >
                 {cell.pct_change >= 0 ? "+" : ""}
                 {cell.pct_change.toFixed(0)}
@@ -277,7 +276,7 @@ export function Heatmap({
         x={padL + (xSteps.length * cellW) / 2}
         y={H - 6}
         textAnchor="middle"
-        className="fill-zinc-400 text-[9px]"
+        className="fill-[var(--ink-soft)] text-[9px]"
       >
         cap rate shift (bp) &rarr;
       </text>
@@ -312,7 +311,7 @@ export function SensitivityCurveChart({ points }: { points: PortfolioCurvePoint[
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Combined portfolio sensitivity curve">
-      <line x1={padL} x2={W - padR} y1={zeroY} y2={zeroY} className="stroke-zinc-300 dark:stroke-zinc-700" strokeWidth={1} />
+      <line x1={padL} x2={W - padR} y1={zeroY} y2={zeroY} className="stroke-[var(--rule)]" strokeWidth={1} />
       <path d={path} style={{ stroke: "var(--accent)" }} className="fill-none" strokeWidth={2} />
       {valid.map((p) => (
         <circle key={p.cap_rate_shift_bp} cx={x(p.cap_rate_shift_bp)} cy={y(p.pct_change)} r={2.5} style={{ fill: "var(--accent)" }} />
@@ -323,7 +322,7 @@ export function SensitivityCurveChart({ points }: { points: PortfolioCurvePoint[
           x={x(p.cap_rate_shift_bp)}
           y={H - 4}
           textAnchor="middle"
-          className="fill-zinc-400 font-mono text-[8px]"
+          className="fill-[var(--ink-soft)] font-mono text-[8px]"
         >
           {p.cap_rate_shift_bp >= 0 ? `+${p.cap_rate_shift_bp}` : p.cap_rate_shift_bp}
         </text>

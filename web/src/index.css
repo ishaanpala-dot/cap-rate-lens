@@ -1,36 +1,39 @@
 @import "tailwindcss";
-@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/source-serif-4";
 @import "@fontsource-variable/jetbrains-mono";
 
 :root {
   color-scheme: light dark;
-  --accent: #2451d6;
-  --accent-soft: #e8edfc;
-  --accent-soft-dark: #16233f;
-  --font-sans: "Outfit Variable", -apple-system, "Segoe UI", system-ui, sans-serif;
+  --paper: #f6f2ea;
+  --ink: #1d1b16;
+  --ink-soft: #6b6354;
+  --rule: #d8d0bf;
+  --card: #ffffff;
+  --accent: #3f5f44;
+  --accent-soft: #e4ebe2;
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+  --font-sans: -apple-system, "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, Consolas, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --accent: #5b8aff;
-    --accent-soft: #16233f;
+    --paper: #15140f;
+    --ink: #ece7da;
+    --ink-soft: #a39a84;
+    --rule: #332f24;
+    --card: #1b1a14;
+    --accent: #8fbd93;
+    --accent-soft: #263228;
   }
 }
 
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: #fafaf9;
-  color: #18181b;
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: #0a0b0d;
-    color: #e4e4e7;
-  }
 }
 
 .tabular {
@@ -39,6 +42,6 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-sans);
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
 }

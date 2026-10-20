@@ -2,7 +2,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="mb-10">
       <h2 className="font-display text-lg font-semibold">{title}</h2>
-      <div className="mt-3 space-y-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <div className="mt-3 space-y-3 text-sm leading-relaxed text-[var(--ink-soft)]">
         {children}
       </div>
     </section>
@@ -11,7 +11,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Formula({ children }: { children: React.ReactNode }) {
   return (
-    <div className="tabular rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+    <div className="tabular border border-[var(--rule)] bg-[var(--card)] px-4 py-3 text-xs text-[var(--ink)]">
       {children}
     </div>
   );
@@ -127,25 +127,25 @@ export default function About() {
         </p>
         <ul className="list-disc space-y-1 pl-5">
           <li>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Line chart with shaded area</span> for the risk premium, because the
+            <span className="font-medium text-[var(--ink)]">Line chart with shaded area</span> for the risk premium, because the
             question is about the gap between two series over time, not either series alone
           </li>
           <li>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Donut chart</span> for sector exposure, because the question is
+            <span className="font-medium text-[var(--ink)]">Donut chart</span> for sector exposure, because the question is
             "what share of the whole portfolio", a part-to-whole comparison a donut reads
             faster than a bar
           </li>
           <li>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Horizontal bar chart</span> for leverage ranking, because the
+            <span className="font-medium text-[var(--ink)]">Horizontal bar chart</span> for leverage ranking, because the
             question is a simple ordered comparison across funds, bars make the ranking
             and magnitude both obvious at once
           </li>
           <li>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Fan / range chart</span> for the Monte Carlo result, to make a
+            <span className="font-medium text-[var(--ink)]">Fan / range chart</span> for the Monte Carlo result, to make a
             distribution visually distinct from the single point estimate above it
           </li>
           <li>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">Monospace numerals</span> everywhere a figure appears, so
+            <span className="font-medium text-[var(--ink)]">Monospace numerals</span> everywhere a figure appears, so
             columns of numbers align and read like financial data, not prose
           </li>
         </ul>
@@ -156,12 +156,11 @@ export default function About() {
           Every figure is sourced from a fund's own public ASX announcements (quarterly
           updates, half-year and full-year results), cited inline wherever it's shown.
           Nothing here is estimated or invented to fill a gap. Where a figure the model
-          needs (WACR for six of the eight funds, sector splits for six of the eight)
-          hasn't been sourced yet, the tool shows "n/a" with a note explaining that
-          honestly: not every gap has been confirmed as the fund simply not disclosing
-          it, some are genuinely just not extracted yet. The two are shown the same way
-          for now, because claiming to know the difference without having checked would
-          be its own kind of dishonesty.
+          needs hasn't been confirmed in a public filing, the tool shows "n/a" with a
+          note explaining that honestly: not every gap has been confirmed as the fund
+          simply not disclosing it, some are genuinely just not extracted yet. The two
+          are shown the same way for now, because claiming to know the difference
+          without having checked would be its own kind of dishonesty.
         </p>
         <p>
           The sector exposure percentages for Dexus and GPT are calculated from dollar
@@ -180,12 +179,15 @@ export default function About() {
 
       <Section title="What's next">
         <p>
-          The honest gap right now is breadth and freshness: six of eight funds are
-          missing WACR because it takes a line-by-line read of each fund's full results
-          PDF to extract, work that's currently manual. The planned fix is an automated
-          extraction pipeline (structured parsing of each fund's quarterly PDF) so the
-          dataset can be refreshed every reporting season without someone re-reading
-          every report by hand. That pipeline is scaffolded but not yet built.
+          The honest gap right now is freshness, not breadth: WACR has now been manually
+          sourced for seven of the eight tracked funds, but each one still takes a
+          line-by-line read of a fund's full results PDF to extract, work that's
+          currently manual. ASX's own announcements platform prohibits automated
+          scraping under its terms of use, and each fund's own investor relations site
+          would need separate, individual automation. The planned fix is a legitimate
+          per-fund extraction pipeline so the dataset can be refreshed every reporting
+          season without re-reading every report by hand; that investigation is
+          documented but the pipeline isn't built yet.
         </p>
       </Section>
     </div>
