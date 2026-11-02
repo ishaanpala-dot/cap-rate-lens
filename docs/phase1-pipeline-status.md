@@ -89,15 +89,29 @@ for exactly one fund:
   chart renders. Unusually, the portfolio WACR printed as literally
   unchanged between the two periods; confirmed directly from both primary
   ASX PDFs, not a copy-paste error.
+- **MGR, SGP, GMG, SCG, VCX**: second WACR snapshot sourced 2026-11-02 for
+  all five, each read directly from that fund's own prior-period primary
+  filing. Chart now renders for all five. MGR's and SGP's figures are
+  calculated (invested-capital-weighted across disclosed segment WACRs),
+  same methodology as their existing FY26 snapshots, not a reported
+  headline number — stated in `source`. VCX's segment cap rates came from
+  its June 2025 "Direct Portfolio Property Book", not the main results
+  release; its own ASX filing URL wasn't confirmed, so `source_url` points
+  to the same-day results announcement instead, with that gap noted
+  directly in `source`.
 - **GPT**: has two snapshots (1H26, FY25) but neither has a `wacr_pct` —
   GPT doesn't publish a single portfolio-wide WACR at all, only per-segment
   figures (see the 2026-10-20 update below) — correctly null, no chart.
-- MGR, SGP, GMG, SCG, VCX still only have one snapshot tracked.
+  The only fund left without one.
 
-**Next step, when picked up:** source a second historical WACR per fund (the
-prior half-year/full-year result) the same way the current single-snapshot
-data was sourced — read the primary ASX PDF directly, don't trust search
-summaries.
+**Status: effectively done.** 7 of 8 funds now have a working risk-premium
+chart (every fund except GPT, which structurally can't have one without a
+calculated, clearly-labelled portfolio figure — not attempted, since MGR
+and SGP already demonstrate what that compromise looks like and GPT doesn't
+need a third example). If GPT's chart is ever wanted, the fix is a
+value-weighted combination of its segment WACRs against
+`sector_exposure.json`'s income-share weights, same pattern as MGR/SGP,
+clearly labelled as calculated.
 
 ## Update 2026-10-20: GPT fixed, found a real data bug along the way
 
