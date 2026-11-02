@@ -47,8 +47,13 @@ export default function About() {
           <li>Compare all eight funds side by side, sorted by any metric</li>
           <li>See each fund's sector split (office / retail / industrial / logistics)</li>
           <li>Track a fund's cap rate against the 10-year government bond yield over time</li>
-          <li>Rank funds by how much leverage amplifies their cap rate risk</li>
+          <li>Rank funds by how much leverage amplifies their cap rate risk, and separately by
+            covenant headroom under an assumed gearing threshold</li>
           <li>See a probability range for NTA outcomes, not just one point estimate</li>
+          <li>See how much rent growth would offset a given cap rate move, across a grid of both</li>
+          <li>Test whether gearing statistically explains WACR across the tracked funds</li>
+          <li>Build a custom portfolio across funds and see its combined gearing, sector
+            exposure and sensitivity curve</li>
         </ul>
       </Section>
 
@@ -126,6 +131,24 @@ export default function About() {
         </p>
       </Section>
 
+      <Section title="Does gearing explain WACR? (cross-sectional regression)">
+        <p>
+          Every other analysis on this site is a closed-form valuation identity: plug in NTA,
+          WACR and gearing, get an exact answer. The regression on the Market comparison tab is
+          different, it's a statistical model fitted to observed data, testing a real
+          hypothesis: do more highly geared funds trade at wider cap rates, as a risk premium
+          for leverage, or is WACR set independently of balance-sheet structure?
+        </p>
+        <p>
+          It's an ordinary least squares fit of WACR on gearing across every tracked fund
+          reporting both, reporting the slope, R-squared, correlation and a proper two-tailed
+          t-test p-value, not just a correlation number asserted without testing it. With only
+          six funds currently qualifying, the honest answer the current data gives is a weak,
+          statistically insignificant relationship (p well above 0.05), stated directly as a
+          hypothesis worth re-testing as coverage grows, not a finding to act on.
+        </p>
+      </Section>
+
       <Section title="Why these specific visuals">
         <p>
           Every chart choice here is trying to match the shape of the underlying
@@ -154,6 +177,11 @@ export default function About() {
             <span className="font-medium text-[var(--ink)]">Monospace numerals</span> everywhere a figure appears, so
             columns of numbers align and read like financial data, not prose
           </li>
+          <li>
+            <span className="font-medium text-[var(--ink)]">Scatter plot with a fitted line</span> for the gearing-vs-WACR
+            regression, because the question is whether a linear relationship exists between
+            two variables across funds, which a scatter shows directly rather than implying
+          </li>
         </ul>
       </Section>
 
@@ -169,10 +197,12 @@ export default function About() {
           without having checked would be its own kind of dishonesty.
         </p>
         <p>
-          The sector exposure percentages for Dexus and GPT are calculated from dollar
-          or income figures in their results releases, since neither fund publishes an
+          The sector exposure percentages for Dexus, GPT and Mirvac are calculated from dollar
+          or income figures in their results releases, since none of the three publishes an
           official percentage table, that calculation and its source are stated directly
-          under each chart.
+          under each chart. Stockland is the only fund in this tool with an officially
+          published percentage split, taken directly from its own results presentation rather
+          than derived.
         </p>
         <p>
           The 10-year government bond yield, used in the risk premium chart, is the one
@@ -185,15 +215,22 @@ export default function About() {
 
       <Section title="What's next">
         <p>
-          The honest gap right now is freshness, not breadth: WACR has now been manually
-          sourced for seven of the eight tracked funds, but each one still takes a
-          line-by-line read of a fund's full results PDF to extract, work that's
-          currently manual. ASX's own announcements platform prohibits automated
-          scraping under its terms of use, and each fund's own investor relations site
-          would need separate, individual automation. The planned fix is a legitimate
-          per-fund extraction pipeline so the dataset can be refreshed every reporting
-          season without re-reading every report by hand; that investigation is
-          documented but the pipeline isn't built yet.
+          WACR is now sourced for seven of the eight tracked funds, each with a second
+          historical snapshot, so the cap rate risk premium chart renders for all seven
+          (GPT is the exception: it doesn't publish a single portfolio-wide WACR at all, only
+          per-segment figures, which is a structural fact about its disclosure, not a gap in
+          this tool). The regression also only covers six funds, since one of the seven
+          (Scentre) doesn't yet have a sourced gearing figure to pair with its WACR, it will
+          cover more as that's filled in.
+        </p>
+        <p>
+          The honest gap right now is freshness, not breadth: each figure still takes a
+          line-by-line read of a fund's full results PDF to extract, work that's currently
+          manual. ASX's own announcements platform prohibits automated scraping under its
+          terms of use, and each fund's own investor relations site would need separate,
+          individual automation. The planned fix is a legitimate per-fund extraction pipeline
+          so the dataset can be refreshed every reporting season without re-reading every
+          report by hand; that investigation is documented but the pipeline isn't built yet.
         </p>
       </Section>
     </div>
