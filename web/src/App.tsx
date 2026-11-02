@@ -13,6 +13,7 @@ import {
   getCovenantRanking,
   getHeatmap,
   getCommentary,
+  getWacrGearingRegression,
   type Fund,
   type FundSummary,
   type SensitivityResult,
@@ -25,6 +26,7 @@ import {
   type CovenantRankingResponse,
   type HeatmapResponse,
   type CommentaryResponse,
+  type RegressionResult,
 } from "./api";
 import {
   SpreadLineChart,
@@ -32,6 +34,7 @@ import {
   RiskBarChart,
   CovenantBarChart,
   Heatmap,
+  RegressionScatter,
   SECTOR_PALETTE,
 } from "./Charts";
 import About from "./About";
@@ -111,6 +114,7 @@ export default function App() {
   const [covenantRanking, setCovenantRanking] = useState<CovenantRankingResponse | null>(null);
   const [heatmap, setHeatmap] = useState<HeatmapResponse | null>(null);
   const [commentary, setCommentary] = useState<CommentaryResponse | null>(null);
+  const [regression, setRegression] = useState<RegressionResult | null>(null);
 
   useEffect(() => {
     listFunds()
@@ -130,6 +134,9 @@ export default function App() {
     getCovenantRanking()
       .then(setCovenantRanking)
       .catch(() => setCovenantRanking(null));
+    getWacrGearingRegression()
+      .then(setRegression)
+      .catch(() => setRegression(null));
   }, []);
 
   useEffect(() => {
@@ -649,6 +656,65 @@ export default function App() {
                 <p className="mt-3 text-xs text-[var(--ink-soft)]">
                   {covenantRanking.coverage_note}
                 </p>
+              </div>
+            )}
+
+            {regression && (
+              <div className="mt-10 border border-[var(--rule)] bg-[var(--card)] p-6">
+                <h3 className="text-sm font-medium text-[var(--ink-soft)]">
+                  Does gearing explain WACR? (cross-sectional regression)
+                </h3>
+                <p className="mt-1 text-xs text-[var(--ink-soft)]">
+                  A fitted statistical model, not a valuation formula like everything else on this
+                  page: ordinary least squares of each fund's WACR on its gearing, across the{" "}
+                  {regression.n} funds currently reporting both.
+                </p>
+                <div className="mt-4 grid gap-6 md:grid-cols-[1fr_auto]">
+                  <RegressionScatter
+                    points={regression.points}
+                    slope={regression.slope}
+                    intercept={regression.intercept}
+                    xLabel={regression.x_label}
+                    yLabel={regression.y_label}
+                  />
+                  <div className="tabular grid grid-cols-2 gap-x-6 gap-y-3 text-sm md:self-center">
+                    <div>
+                      <p className="text-xs text-[var(--ink-soft)]">Slope</p>
+                      <p className="font-display text-lg font-semibold">
+                        {regression.slope >= 0 ? "+" : ""}
+                        {regression.slope.toFixed(3)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[var(--ink-soft)]">R&sup2;</p>
+                      <p className="font-display text-lg font-semibold">
+                        {regression.r_squared.toFixed(3)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[var(--ink-soft)]">Correlation</p>
+                      <p className="font-display text-lg font-semibold">
+                        {regression.correlation.toFixed(3)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[var(--ink-soft)]">p-value</p>
+                      <p
+                        className={`font-display text-lg font-semibold ${
+                          regression.p_value < 0.05 ? "" : "text-[var(--ink-soft)]"
+                        }`}
+                      >
+                        {regression.p_value.toFixed(3)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-4 text-xs text-[var(--ink-soft)]">{regression.interpretation}</p>
+                {regression.excluded.length > 0 && (
+                  <p className="mt-2 text-xs text-[var(--ink-soft)]">
+                    Excluded (missing WACR or gearing): {regression.excluded.join(", ")}.
+                  </p>
+                )}
               </div>
             )}
           </>

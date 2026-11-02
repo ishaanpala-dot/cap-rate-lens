@@ -1,4 +1,4 @@
-import type { SpreadPoint, HeatmapCell, PortfolioCurvePoint } from "./api";
+import type { SpreadPoint, HeatmapCell, PortfolioCurvePoint, RegressionPoint } from "./api";
 
 const SECTOR_PALETTE = ["#3f5f44", "#7f9c82", "#b9c7ad", "#dfdccb"];
 
@@ -327,6 +327,108 @@ export function SensitivityCurveChart({ points }: { points: PortfolioCurvePoint[
           {p.cap_rate_shift_bp >= 0 ? `+${p.cap_rate_shift_bp}` : p.cap_rate_shift_bp}
         </text>
       ))}
+    </svg>
+  );
+}
+
+export function RegressionScatter({
+  points,
+  slope,
+  intercept,
+  xLabel,
+  yLabel,
+}: {
+  points: RegressionPoint[];
+  slope: number;
+  intercept: number;
+  xLabel: string;
+  yLabel: string;
+}) {
+  const W = 480;
+  const H = 280;
+  const padL = 48;
+  const padR = 16;
+  const padT = 16;
+  const padB = 36;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const xs = points.map((p) => p.x);
+  const ys = points.map((p) => p.y_actual);
+  const xMin = Math.min(...xs);
+  const xMax = Math.max(...xs);
+  const yMin = Math.min(...ys, slope * xMin + intercept);
+  const yMax = Math.max(...ys, slope * xMax + intercept);
+  const xPad = (xMax - xMin) * 0.1 || 1;
+  const yPad = (yMax - yMin) * 0.15 || 0.5;
+
+  const x0 = xMin - xPad;
+  const x1 = xMax + xPad;
+  const y0 = yMin - yPad;
+  const y1 = yMax + yPad;
+
+  const x = (v: number) => padL + ((v - x0) / (x1 - x0)) * plotW;
+  const y = (v: number) => padT + plotH - ((v - y0) / (y1 - y0)) * plotH;
+
+  const lineX1 = x0;
+  const lineX2 = x1;
+  const lineY1 = slope * lineX1 + intercept;
+  const lineY2 = slope * lineX2 + intercept;
+
+  const yTicks = [y0 + (y1 - y0) * 0.1, (y0 + y1) / 2, y1 - (y1 - y0) * 0.1];
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Scatter plot of WACR against gearing with a fitted regression line">
+      {yTicks.map((v) => (
+        <g key={v}>
+          <line x1={padL} x2={W - padR} y1={y(v)} y2={y(v)} className="stroke-[var(--rule)]" strokeWidth={1} />
+          <text x={padL - 6} y={y(v) + 3} textAnchor="end" className="fill-[var(--ink-soft)] font-mono text-[9px]">
+            {v.toFixed(1)}%
+          </text>
+        </g>
+      ))}
+
+      <line
+        x1={x(lineX1)}
+        y1={y(lineY1)}
+        x2={x(lineX2)}
+        y2={y(lineY2)}
+        style={{ stroke: "var(--accent)" }}
+        strokeWidth={1.5}
+        strokeDasharray="4 3"
+      />
+
+      {points.map((p) => (
+        <g key={p.fund_id}>
+          <circle cx={x(p.x)} cy={y(p.y_actual)} r={4} style={{ fill: "var(--accent)" }} />
+          <text
+            x={x(p.x)}
+            y={y(p.y_actual) - 8}
+            textAnchor="middle"
+            className="fill-[var(--ink)] font-mono text-[9px] font-medium"
+          >
+            {p.ticker}
+          </text>
+        </g>
+      ))}
+
+      <text
+        x={padL + plotW / 2}
+        y={H - 4}
+        textAnchor="middle"
+        className="fill-[var(--ink-soft)] text-[9px]"
+      >
+        {xLabel}
+      </text>
+      <text
+        x={12}
+        y={padT + plotH / 2}
+        textAnchor="middle"
+        transform={`rotate(-90 12 ${padT + plotH / 2})`}
+        className="fill-[var(--ink-soft)] text-[9px]"
+      >
+        {yLabel}
+      </text>
     </svg>
   );
 }

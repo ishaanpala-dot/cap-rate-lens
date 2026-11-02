@@ -150,6 +150,36 @@ export async function getRiskRanking(): Promise<RiskRankingResponse> {
   return res.json();
 }
 
+export type RegressionPoint = {
+  fund_id: string;
+  ticker: string;
+  x: number;
+  y_actual: number;
+  y_predicted: number;
+  residual: number;
+};
+
+export type RegressionResult = {
+  n: number;
+  slope: number;
+  intercept: number;
+  r_squared: number;
+  correlation: number;
+  p_value: number;
+  std_err: number;
+  x_label: string;
+  y_label: string;
+  points: RegressionPoint[];
+  excluded: string[];
+  interpretation: string;
+};
+
+export async function getWacrGearingRegression(): Promise<RegressionResult> {
+  const res = await fetch(`${API_BASE}/regression/wacr-gearing`);
+  if (!res.ok) throw new Error("Failed to load regression");
+  return res.json();
+}
+
 export type MonteCarloCalibration = {
   annualised_std_dev_pct: number;
   daily_std_dev_pct: number;

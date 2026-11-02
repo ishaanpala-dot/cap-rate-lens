@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import rba_bond_yields
+from regression import wacr_vs_gearing
 from valuation import (
     covenant_headroom,
     leverage_adjusted_sensitivity,
@@ -219,6 +220,20 @@ def get_risk_ranking():
             else "All tracked funds are covered."
         ),
     }
+
+
+@app.get("/regression/wacr-gearing")
+def get_wacr_gearing_regression():
+    """Cross-sectional OLS of WACR on gearing across every tracked fund
+    reporting both, as of each fund's latest snapshot. A statistical model
+    fitted to observed data, unlike every other endpoint here which is a
+    closed-form valuation identity — small sample size (n < 10) means this
+    is a hypothesis to test, not a confident estimate, and the response
+    says so directly."""
+    try:
+        return wacr_vs_gearing(FUNDS)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @app.get("/funds/{fund_id}/monte-carlo")
