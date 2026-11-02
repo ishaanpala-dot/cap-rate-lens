@@ -85,10 +85,14 @@ it plots WACR vs. bond yield over time, not a single point. Today that's true
 for exactly one fund:
 
 - **DXS**: FY26 (6.06%) and 1H26 (6.19%) WACR both sourced — chart renders.
-- **GPT**: has two snapshots (1H26, FY25) but FY25's WACR was never sourced
-  (`null`) — correctly excluded rather than gap-filled, but means no chart.
-- All other 6 funds (CLW, MGR, SGP, GMG, SCG, VCX) only have one snapshot
-  tracked at all.
+- **CLW**: 1H FY26 (5.4%) and FY25 (5.4%) WACR both sourced, 2026-11-02 —
+  chart renders. Unusually, the portfolio WACR printed as literally
+  unchanged between the two periods; confirmed directly from both primary
+  ASX PDFs, not a copy-paste error.
+- **GPT**: has two snapshots (1H26, FY25) but neither has a `wacr_pct` —
+  GPT doesn't publish a single portfolio-wide WACR at all, only per-segment
+  figures (see the 2026-10-20 update below) — correctly null, no chart.
+- MGR, SGP, GMG, SCG, VCX still only have one snapshot tracked.
 
 **Next step, when picked up:** source a second historical WACR per fund (the
 prior half-year/full-year result) the same way the current single-snapshot

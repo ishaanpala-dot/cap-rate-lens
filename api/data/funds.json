@@ -100,6 +100,18 @@
           "occupancy_pct": 99.9,
           "source": "Charter Hall Long WALE REIT 1H FY26 ASX release, 12 Feb 2026 (p.2: portfolio WACR 5.4%, balance sheet gearing 29.8%, look-through gearing 41.0%)",
           "source_url": "https://announcements.asx.com.au/asxpdf/20260212/pdf/06w70tbpqppsr4.pdf"
+        },
+        {
+          "period": "FY25",
+          "as_of": "2025-06-30",
+          "nta_per_security": 4.59,
+          "wacr_pct": 5.4,
+          "gearing_pct": 31.4,
+          "sectors": [],
+          "wale_years": 9.3,
+          "occupancy_pct": 99.9,
+          "source": "Charter Hall Long WALE REIT 2025 Full Year Results, ASX release 6 Aug 2025 (p.3: portfolio WACR unchanged at 5.4%, balance sheet gearing 31.4%, look-through gearing 38.8%)",
+          "source_url": "https://announcements.asx.com.au/asxpdf/20250806/pdf/06mky5s7wnz46x.pdf"
         }
       ]
     },
